@@ -40,6 +40,9 @@ def PlotSeasonSites(Dataset_OLD, Dataset_NEW):
             'AND': 2,
             'MWA': 1,
             'MLO': 18,
+	    'MBO': 16,
+	    'LLN': 16,
+	    'NAMCO': 18, 
             }
             return level.get(SiteID.upper(), 0)
         
