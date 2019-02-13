@@ -13,7 +13,7 @@ from sklearn.metrics import r2_score
 def SurfaceObsTGM(Old_Dataset, New_Dataset):
     
      # Read in the data for the observed sites
-    AnHgObs= pd.read_csv('~/Documents/HG/data/TGMSiteAnnual.csv',skiprows=[0], na_values=(-9999))
+    AnHgObs= pd.read_csv('data/TGMSiteAnnual.csv',skiprows=[0], na_values=(-9999))
     AnHgObs.columns=['SiteID', 'Lat', 'Lon','Alt', 'TGM', 'Hg0']
     
     # Set levels for the colorbar in order to have a nonlinear scale.
@@ -24,7 +24,7 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset):
     
     # Extract and add together Hg0 and Hg2 at the surface from the reference model multiplying by the unit converion factor 
     # to obtain values for Total Gaseous Mercury.
-    OLD_Hg0 =((Old_Dataset['IJ_AVG_S_Hg0'].isel(lev=0).mean('time')) * Unit_Conversion)                              
+    OLD_Hg0 =((Old_Dataset['IJ_AVG_S_Hg0'].isel(lev=0).mean('time')) * 		Unit_Conversion)                              
     OLD_Hg2 =((Old_Dataset['IJ_AVG_S_Hg2'].isel(lev=0).mean('time')) * Unit_Conversion)                
     TGM_Old = (OLD_Hg0 + OLD_Hg2)
     

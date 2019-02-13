@@ -12,7 +12,7 @@ from sklearn.metrics import r2_score
 #%matplotlib inline    
 def PlotSeasonSites(Dataset_OLD, Dataset_NEW):
     # Import the observed data from the sites     
-    Hgobs = pd.read_csv('~/Documents/HG/data/TGMSiteMonthly.csv',  skiprows=[0], na_values=(-9999))
+    Hgobs = pd.read_csv('data/TGMSiteMonthly.csv',  skiprows=[0], na_values=(-9999))
     Hgobs.columns=['SiteID', 'Lat', 'Lon','Month', 'Year', 'Concentration', 'Standard deviation']
     Site= Hgobs.SiteID
     

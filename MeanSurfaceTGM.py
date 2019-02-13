@@ -15,7 +15,7 @@ def HgMeanSurfaceTGM (Dataset_OLD, Dataset_NEW, Variable=['IJ_AVG_S_Hg0', 'IJ_AV
                       Units="$ng/m^2$", Unit_Conversion=8.93, Title="Surface TGM"):
     
      # Read in the data for the observed sites
-    AnHgObs= pd.read_csv('~/Documents/HG/data/TGMSiteAnnual.csv',skiprows=[0], na_values=(-9999))
+    AnHgObs= pd.read_csv('data/TGMSiteAnnual.csv',skiprows=[0], na_values=(-9999))
     AnHgObs.columns=['SiteID', 'Lat', 'Lon','Alt', 'TGM', 'Hg0']
     
     # Set levels for the colorbar in order to have a nonlinear scale.
