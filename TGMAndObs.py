@@ -13,7 +13,7 @@ from sklearn.metrics import r2_score
 def SurfaceObsTGM(Old_Dataset, New_Dataset):
     
     # Read in the data for the observed sites
-    AnHgObs= pd.read_csv('~/Documents/HG/data/TGMSiteAnnual.csv',skiprows=[0], na_values=(-9999))
+    AnHgObs= pd.read_csv('data/TGMSiteAnnual.csv',skiprows=[0], na_values=(-9999))
     AnHgObs.columns=['SiteID', 'Lat', 'Lon','Alt', 'TGM', 'Hg0']
     # Set levels for the colorbar in order to have a nonlinear scale.
     Levels= (0.75, 0.95, 1.15, 1.35, 1.55, 1.75, 2.30, 2.90, 3.50)
