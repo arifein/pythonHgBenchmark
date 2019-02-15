@@ -8,25 +8,13 @@ import cartopy.crs as ccrs
 from matplotlib import colorbar, colors
 import statistics
 from sklearn.metrics import r2_score
+from SiteLevels import levels
 
 def LatitudinalGraphs(Dataset_OLD, Dataset_NEW):
     # Import the observed data from the sites     
     Hgobs = pd.read_csv('data/TGMSiteMonthly.csv',  skiprows=[0], na_values=(-9999))
     Hgobs.columns=['SiteID', 'Lat', 'Lon','Month', 'Year', 'Concentration', 'Standard deviation']
  
-    # Create a dictionary for the levels of the model who's surfaces are not at 0
-    def levels(SiteID):
-        level = {
-        'ZEP': 3,
-        'AND': 2,
-        'MWA': 1,
-        'MLO': 18,
-        'MBO': 16,
-        'NamCo': 18,
-        'LLN':16,
-            }
-        return level.get(SiteID.upper(), 0)
-
 
     # Make a variable for the unit conversion factor to obtain ng/m^3
     Unit_Conversion= 8.93

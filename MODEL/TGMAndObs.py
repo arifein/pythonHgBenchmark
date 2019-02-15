@@ -8,8 +8,7 @@ import cartopy.crs as ccrs
 from matplotlib import colorbar, colors
 import statistics
 from sklearn.metrics import r2_score
-#%matplotlib inline
-
+from SiteLevels import levels
 def SurfaceObsTGM(Old_Dataset, New_Dataset):
     
     # Read in the data for the observed sites
@@ -21,17 +20,6 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset):
     
     # Make a variable for the unit conversion factor to obtain ng/m^3
     Unit_Conversion= 8.93
-    def levels(SiteID):
-        level = {
-        'ZEP': 3,
-        'AND': 2,
-        'MWA': 1,
-        'MLO': 18,
-        'MBO': 16,
-        'NamCo': 18,
-        'LLN':16,
-            }
-        return level.get(SiteID.upper(), 0)
     SiteID=AnHgObs.SiteID
         # Extract and add together Hg0 and Hg2 at the surface from the reference model multiplying by the unit converion factor 
         # to obtain values for Total Gaseous Mercury.

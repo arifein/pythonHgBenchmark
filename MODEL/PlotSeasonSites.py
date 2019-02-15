@@ -9,7 +9,7 @@ import cartopy.crs as ccrs
 from matplotlib import colorbar, colors
 import statistics
 from sklearn.metrics import r2_score
-#%matplotlib inline    
+from SiteLevels import levels   
 def PlotSeasonSites(Dataset_OLD, Dataset_NEW):
     # Import the observed data from the sites     
     Hgobs = pd.read_csv('data/TGMSiteMonthly.csv',  skiprows=[0], na_values=(-9999))
@@ -31,20 +31,6 @@ def PlotSeasonSites(Dataset_OLD, Dataset_NEW):
         
         # Choose the first Site ID that is unique
         Site_ID= Dataset.SiteID[0]
-        
-        
-        # Create a dictionary for the levels of the model who's surfaces are not at 0
-        def levels(SiteID):
-            level = {
-            'ZEP': 3,
-            'AND': 2,
-            'MWA': 1,
-            'MLO': 18,
-	    'MBO': 16,
-	    'LLN': 16,
-	    'NAMCO': 18, 
-            }
-            return level.get(SiteID.upper(), 0)
         
         
         # Extract and add together Hg0 and Hg2 at the surface from the reference model multiplying by the unit converion factor 
