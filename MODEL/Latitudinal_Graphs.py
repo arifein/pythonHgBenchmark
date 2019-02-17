@@ -16,13 +16,24 @@ def LatitudinalGraphs(Dataset_OLD, Dataset_NEW):
     Hgobs.columns=['SiteID', 'Lat', 'Lon','Month', 'Year', 'Concentration', 'Standard deviation']
  
 
+
     # Make a variable for the unit conversion factor to obtain ng/m^3
     Unit_Conversion= 8.93
-    # Make arrays of SiteIDs for the Arctic, Antarctic and Northern and Souther Mid Latitudes.
-    Arctic=np.array(['ALT', 'VRS', 'ZEP', 'AND', 'PAL'])
-    SouthMidLat=np.array(['CPT', 'AMS', 'BAR'])
-    Antarctic= np.array(['TRO', 'DDU', 'DMC'])
-    NorthMidLat= np.array(['MHD', 'UDH', 'KEJ',  'HTW', 'PNY', 'ATN', 'YKV', 'GRB']) #'EBG',
+    # Make arrays of SiteIDs for the Arctic, Antarctic and Northern and Souther Mid Latitudes, extracting the sites
+    # in the data sets. 
+    Arctic=['ALT', 'VRS', 'ZEP', 'AND', 'PAL','AMD']
+    Arctic = [e for e in Arctic if e in list(Hgobs.SiteID)]
+    
+    SouthMidLat=['CPT', 'AMS', 'BAR']
+    SouthMidLat = [e for e in SouthMidLat if e in list(Hgobs.SiteID)]
+    
+    Antarctic= ['TRO', 'DDU', 'DMC']
+    Antarctic = [e for e in Antarctic if e in list(Hgobs.SiteID)]
+    
+    NorthMidLat= ['MHD', 'UDH', 'KEJ',  'HTW', 'PNY', 'ATN', 'YKV', 'GRB','BIR', 'WAL', 'BRA', 'SAT', 'THOMPFARM', 'SCO', 'STIWELL', 'EBG'] 
+    NorthMidLat = [e for e in NorthMidLat if e in list(Hgobs.SiteID)]
+    
+    
     
     # Create numpy zeros for the amount of items in each list.
     Arc_ds=np.zeros(len(Arctic))
