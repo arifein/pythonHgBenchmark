@@ -12,9 +12,14 @@ along with their tracer and diag info (preferably put into the directory folder 
 Summary of scripts and their function:
 
 GeneralGraph : Plot the mean over time for any chosen variable at the surface level for both the reference and new models. 
+
 Latitudinal_Graphs : Plot observations against the model for different latitudes.
+
 MeanSurfaceTGM :  Plot the mean surface TGM for mercury for both the reference and new models. 
+
 PlotSeasonSites : Plot the reference and new models against the observations made at each site for a year. 
+
 SiteLevels : Dictionary of all of the sites with different levels other than 0 at the surface.
+
 TGMAndObs : Plot the mean surface TGM for mercury against different sites for the reference and new models.
 
