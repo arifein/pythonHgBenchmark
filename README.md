@@ -1,7 +1,7 @@
 Mercury Benchmarking Script 
 
-This directory contains a set of python scripts used to benchmark used to benchmark new and updated versions of the GEOS-Chem 
-mercury model. The primary script used is a Jupyter Notebook named Mercury Benchmark; this will call all other necessary routines.
+This directory contains a set of python scripts used to benchmark new and updated versions of the GEOS-Chem mercury model. 
+In order to run the model a Jupyter Notebook named Mercury Benchmark is used; this will call all other necessary routines.
 
 Also included are various data to which the model versions are compared found in the folder data. 
 
