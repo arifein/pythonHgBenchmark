@@ -14,7 +14,7 @@ from sklearn.metrics import r2_score
 def HgMeanSurfaceTGM (Dataset_OLD, Dataset_NEW, Variable=['IJ_AVG_S_Hg0', 'IJ_AVG_S_Hg2'], 
                       Units="$ng/m^2$", Unit_Conversion=8.93, Title="Surface TGM"):
 
-    """ Plot the mean surface TGM for mercuryfor both the reference and new models. 
+    """ Plot the mean surface TGM for mercury for both the reference and new models. 
     Produce the absolute and percent differences for the reference and new models.
 
  
