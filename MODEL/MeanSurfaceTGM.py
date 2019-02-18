@@ -13,7 +13,25 @@ from sklearn.metrics import r2_score
 # Define a function for Surface TGM with default variables set for such
 def HgMeanSurfaceTGM (Dataset_OLD, Dataset_NEW, Variable=['IJ_AVG_S_Hg0', 'IJ_AVG_S_Hg2'], 
                       Units="$ng/m^2$", Unit_Conversion=8.93, Title="Surface TGM"):
+
+    """ Plot the mean surface TGM for mercuryfor both the reference and new models. 
+    Produce the absolute and percent differences for the reference and new models.
+
+ 
+    **Note: This function can also be used in much the same way as the General Graphing Function, if only the 
+    datasets are specified as everything else needed for this function is specified in it's default values.
     
+    Args:
+    Dataset_OLD (str) : Reference Model bpch file
+    Dataset_NEW (str) : New Model bpch file 
+    Variable (str) : Names of the variable/s you are choosing to take the mean over time with e.g.
+    ['Variable 1', 'Variable 2', etc]. 
+    Units (str) : Name of the units the data is in.
+    Unit_Conversion (float) : Conversion factor that converts your data to your preferred unit.
+    Title (str) : Title of your graph. 
+    
+    
+    """    
      # Read in the data for the observed sites
     AnHgObs= pd.read_csv('data/TGMSiteAnnual.csv',skiprows=[0], na_values=(-9999))
     AnHgObs.columns=['SiteID', 'Lat', 'Lon','Alt', 'TGM', 'Hg0']
@@ -23,21 +41,6 @@ def HgMeanSurfaceTGM (Dataset_OLD, Dataset_NEW, Variable=['IJ_AVG_S_Hg0', 'IJ_AV
     
     # Make a variable for the unit conversion factor to obtain ng/m^3
     Unit_Conversion= 8.93
-    
-    # Extract and add together Hg0 and Hg2 at the surface from the reference model multiplying by the unit converion factor 
-    # to obtain values for Total Gaseous Mercury.
-    OLD_Hg0 =((Dataset_OLD['IJ_AVG_S_Hg0'].isel(lev=0)) * Unit_Conversion)                              
-    OLD_Hg2 =((Dataset_OLD['IJ_AVG_S_Hg2'].isel(lev=0)) * Unit_Conversion)                
-    TGM_Old = (OLD_Hg0 + OLD_Hg2)
-    
-    
-    # Extract and add together Hg0 and Hg2 at the surface from the new model multiplying by the unit converion factor 
-    # to obtain values for Total Gaseous Mercury.
-    NEW_Hg0 =((Dataset_NEW['IJ_AVG_S_Hg0'].isel(lev=0) * Unit_Conversion))                         
-    NEW_Hg2 =((Dataset_NEW['IJ_AVG_S_Hg2'].isel(lev=0) * Unit_Conversion))
-    TGM_New = NEW_Hg0 + NEW_Hg2
-
-    
     
     
     

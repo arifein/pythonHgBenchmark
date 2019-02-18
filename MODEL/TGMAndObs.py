@@ -10,7 +10,15 @@ import statistics
 from sklearn.metrics import r2_score
 from SiteLevels import levels
 def SurfaceObsTGM(Old_Dataset, New_Dataset):
+    """ Plot the mean surface TGM for mercury against different sites for the reference and new models. Also calculate
+    the mean for both models, the mean of the observations and the coefficient of determination. 
     
+        Args: 
+    Dataset_OLD (str) : Reference Model bpch file
+    Dataset_NEW (str) : New Model bpch file 
+    
+    
+    """    
     # Read in the data for the observed sites
     AnHgObs= pd.read_csv('data/TGMSiteAnnual.csv',skiprows=[0], na_values=(-9999))
     AnHgObs.columns=['SiteID', 'Lat', 'Lon','Alt', 'TGM', 'Hg0']

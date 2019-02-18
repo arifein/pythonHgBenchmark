@@ -12,7 +12,18 @@ from sklearn.metrics import r2_score
 
 # Define a function to take the mean of any variable at the surface.
 def GeneralHgMeanSurface (Dataset_OLD, Dataset_NEW, Variable, Units, Unit_Conversion, Title="Mean over Time"):
+    """ Plot the mean over time for any chosen variable at the surface level for both the reference and new models. 
+    Produce the absolute and percent differences for the reference and new models.
+    Args: 
+    Dataset_OLD (str) : Reference Model bpch file
+    Dataset_NEW (str) : New Model bpch file 
+    Variable (str) : Names of the variable/s you are choosing to take the mean over time with e.g.
+    ['Variable 1', 'Variable 2', etc]. 
+    Units (str) : Name of the units the data is in.
+    Unit_Conversion (float) : Conversion factor that converts your data to your preferred unit.
+    Title (str) : Title of your graph. 
     
+    """
     # An if statement is used to account for the use of multiple variables.
     if type(Variable) is list and len(Variable) > 1:
         OLD_sum=0

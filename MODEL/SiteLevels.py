@@ -1,4 +1,10 @@
 def levels(SiteID):
+    """ Dictionary of all of the sites with different levels other than 0 at the surface.
+	Arg: 
+	SiteID (str) : The Site ID you input to retrieve the levels.
+    
+    
+    """
     level = {
     'ZEP': 3,
     'AND': 2,

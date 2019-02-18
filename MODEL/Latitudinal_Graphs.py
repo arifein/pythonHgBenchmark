@@ -11,6 +11,16 @@ from sklearn.metrics import r2_score
 from SiteLevels import levels
 
 def LatitudinalGraphs(Dataset_OLD, Dataset_NEW):
+    """Plot observations against the model for different latitudes  (Southern Mid Latitiude, North Mid Latitude,
+    Arctic, Antarctic).
+    
+    Args:
+    Dataset_OLD (str) : Reference model bpch file
+    Dataset_NEW (str) : New model bpch file
+    
+    
+    """
+
     # Import the observed data from the sites     
     Hgobs = pd.read_csv('data/TGMSiteMonthly.csv',  skiprows=[0], na_values=(-9999))
     Hgobs.columns=['SiteID', 'Lat', 'Lon','Month', 'Year', 'Concentration', 'Standard deviation']

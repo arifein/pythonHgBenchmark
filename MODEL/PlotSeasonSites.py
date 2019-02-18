@@ -11,6 +11,13 @@ import statistics
 from sklearn.metrics import r2_score
 from SiteLevels import levels   
 def PlotSeasonSites(Dataset_OLD, Dataset_NEW):
+    """ Plot the reference and new models against the observations made at each site for a year. 
+    
+    Args:
+    Dataset_OLD (str) : Reference Model bpch file
+    Dataset_NEW (str) : New Model bpch file     
+    
+    """
     # Import the observed data from the sites     
     Hgobs = pd.read_csv('data/TGMSiteMonthly.csv',  skiprows=[0], na_values=(-9999))
     Hgobs.columns=['SiteID', 'Lat', 'Lon','Month', 'Year', 'Concentration', 'Standard deviation']
