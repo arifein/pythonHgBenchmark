@@ -23,7 +23,7 @@ SiteLevels : Dictionary of all of the sites with different levels other than 0 a
 
 TGMAndObs : Plot the mean surface TGM for mercury against different sites for the reference and new models.
 
-Packages you will need to run this are xarray, matplotlib, cartopy, numpy, pandas, xbpch, statistics, and sklearn.
+Packages you will need to run this are xarray 0.9.6, matplotlib, cartopy, numpy, pandas, xbpch 0.3.2 , statistics, and sklearn.
 
 
 
