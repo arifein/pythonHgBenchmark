@@ -174,39 +174,5 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset):
     # Show the plot.
     plt.show()  
     
-    return (OLDMAP, NEWMAP)
 
-    
-    # Add a figure.
-    NEWMAP = plt.figure()
-    
-    # Add a geographical projection on the map.
-    ax = NEWMAP.add_subplot(111, projection=ccrs.PlateCarree())
-    
-    # Plot the new model on the projection.
-    im=TGM_New.plot.contourf(x='lon',y='lat',levels=Levels, ax=ax,transform=ccrs.PlateCarree(), cmap='viridis', 
-                         cbar_kwargs={'orientation':'horizontal',
-                                      'ticklocation':'auto',
-                                      'label':"Not Linear $ng/m^3$ "})
-    
-    # Add text to the plot.
-    plt.text(200,-50,textstr1, fontsize=14)
-    plt.text(200,-75,textstr3, fontsize=14)
-    plt.text(200,-100,textstr5, fontsize=14)
-    
-    # Add the observed values to the plot.
-    plt.scatter(Long, Lati,  transform=ccrs.PlateCarree(),marker='D',
-            norm=colors.BoundaryNorm(boundaries=Levels, ncolors=256), 
-            linewidths=0.75, edgecolors='black',
-            label=None, c=Value, cmap='viridis')
-
-    # Add a title.
-    plt.title(' New Model Version: Surface TGM', fontsize=15)       
-    
-    # Show the coastlines.
-    ax.coastlines()
-    
-    # Show the plot.
-    plt.show()  
-    
-    return (OLDMAP, NEWMAP)
+    return 

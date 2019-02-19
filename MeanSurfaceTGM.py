@@ -81,7 +81,7 @@ def HgMeanSurfaceTGM (Dataset_OLD, Dataset_NEW, Variable=['IJ_AVG_S_Hg0', 'IJ_AV
     # Plot the reference model and use a geographical map.
     ax = plt.subplot(221, projection=ccrs.PlateCarree())
     im=OLD_sum.plot.contourf(x='lon',y='lat',ax=ax, transform=ccrs.PlateCarree(), levels= Levels, cmap='viridis', 
-                             title= (Title), 
+                              
                              cbar_kwargs={'orientation':'horizontal',
                                       'ticklocation':'auto',
                                       'label':"Not Linear " + Units})  
@@ -131,6 +131,6 @@ def HgMeanSurfaceTGM (Dataset_OLD, Dataset_NEW, Variable=['IJ_AVG_S_Hg0', 'IJ_AV
     TGMGraph= plt.show()
     
     # Return the four graphs. 
-    return TGMGraph
+    return 
     
 

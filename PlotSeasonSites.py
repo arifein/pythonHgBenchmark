@@ -96,4 +96,4 @@ def PlotSeasonSites(Dataset_OLD, Dataset_NEW):
     
         # Show the plot
         plt.show()
-    return SeasonGraph
+    return

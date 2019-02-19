@@ -61,7 +61,7 @@ def GeneralHgMeanSurface (Dataset_OLD, Dataset_NEW, Variable, Units, Unit_Conver
     
     # Plot the reference model and use a geographical map.
     ax = plt.subplot(221, projection=ccrs.PlateCarree())
-    im=OLD_sum.plot.contourf(x='lon',y='lat',ax=ax, transform=ccrs.PlateCarree(), cmap='viridis', title= (Title), 
+    im=OLD_sum.plot.contourf(x='lon',y='lat',ax=ax, transform=ccrs.PlateCarree(), cmap='viridis', 
                          cbar_kwargs={'orientation':'horizontal',
                                       'ticklocation':'auto',
                                       'label': Units})  

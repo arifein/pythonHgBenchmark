@@ -90,8 +90,8 @@ def LatitudinalGraphs(Dataset_OLD, Dataset_NEW):
             Arc_DS_NEW = Arc_NEW_mod
         else:
 
-            Arc_DS_OLD= xr.concat([Arc_DS_OLD,Arc_OLD_mod])
-            Arc_DS_NEW= xr.concat([Arc_DS_NEW,Arc_NEW_mod])
+            Arc_DS_OLD= xr.concat([Arc_DS_OLD,Arc_OLD_mod], dim='concat_dims')
+            Arc_DS_NEW= xr.concat([Arc_DS_NEW,Arc_NEW_mod], dim='concat_dims')
    # Calculate the mean and standard deviations for the reference and new models.
     Arc_meanmod_OLD=Arc_DS_OLD.mean('concat_dims')
     Arc_stdevmod_OLD= np.asarray(Arc_DS_OLD.std('concat_dims'))
@@ -139,8 +139,8 @@ def LatitudinalGraphs(Dataset_OLD, Dataset_NEW):
             SML_DS_NEW = SML_NEW_mod
         else:
 
-            SML_DS_OLD= xr.concat([SML_DS_OLD,SML_OLD_mod])
-            SML_DS_NEW= xr.concat([SML_DS_NEW,SML_NEW_mod])
+            SML_DS_OLD= xr.concat([SML_DS_OLD,SML_OLD_mod], dim='concat_dims')
+            SML_DS_NEW= xr.concat([SML_DS_NEW,SML_NEW_mod], dim='concat_dims')
     # Calculate the mean and standard deviations for the reference and new models.
     SML_meanmod_OLD=SML_DS_OLD.mean('concat_dims')
     SML_stdevmod_OLD= np.asarray(SML_DS_OLD.std('concat_dims'))
@@ -187,8 +187,8 @@ def LatitudinalGraphs(Dataset_OLD, Dataset_NEW):
             Ant_DS_NEW = Ant_NEW_mod
         else:
 
-            Ant_DS_OLD= xr.concat([Ant_DS_OLD,Ant_OLD_mod])
-            Ant_DS_NEW= xr.concat([Ant_DS_NEW,Ant_NEW_mod])
+            Ant_DS_OLD= xr.concat([Ant_DS_OLD,Ant_OLD_mod], dim='concat_dims')
+            Ant_DS_NEW= xr.concat([Ant_DS_NEW,Ant_NEW_mod], dim='concat_dims')
             
     # Calculate the mean and standard deviations for the reference and new models.   
     Ant_meanmod_OLD=Ant_DS_OLD.mean('concat_dims')
@@ -242,8 +242,8 @@ def LatitudinalGraphs(Dataset_OLD, Dataset_NEW):
             NML_DS_NEW = NML_NEW_mod
         else:
 
-            NML_DS_OLD= xr.concat([NML_DS_OLD,NML_OLD_mod])
-            NML_DS_NEW= xr.concat([NML_DS_NEW,NML_NEW_mod])
+            NML_DS_OLD= xr.concat([NML_DS_OLD,NML_OLD_mod], dim='concat_dims')
+            NML_DS_NEW= xr.concat([NML_DS_NEW,NML_NEW_mod], dim='concat_dims')
             
     # Calculate the mean and standard deviations for the reference and new models.
     NML_meanmod_OLD=NML_DS_OLD.mean('concat_dims')
