@@ -94,10 +94,10 @@ def LatitudinalGraphs(Dataset_OLD, Dataset_NEW):
             Arc_DS_NEW= xr.concat([Arc_DS_NEW,Arc_NEW_mod])
    # Calculate the mean and standard deviations for the reference and new models.
     Arc_meanmod_OLD=Arc_DS_OLD.mean('concat_dims')
-    Arc_stdevmod_OLD= Arc_DS_OLD.std('concat_dims')
+    Arc_stdevmod_OLD= np.asarray(Arc_DS_OLD.std('concat_dims'))
     
     Arc_meanmod_NEW= Arc_DS_NEW.mean('concat_dims')
-    Arc_stdevmod_NEW= Arc_DS_NEW.std('concat_dims')
+    Arc_stdevmod_NEW= np.asarray(Arc_DS_NEW.std('concat_dims'))
     
 
     
@@ -143,10 +143,10 @@ def LatitudinalGraphs(Dataset_OLD, Dataset_NEW):
             SML_DS_NEW= xr.concat([SML_DS_NEW,SML_NEW_mod])
     # Calculate the mean and standard deviations for the reference and new models.
     SML_meanmod_OLD=SML_DS_OLD.mean('concat_dims')
-    SML_stdevmod_OLD= SML_DS_OLD.std('concat_dims')
+    SML_stdevmod_OLD= np.asarray(SML_DS_OLD.std('concat_dims'))
     
     SML_meanmod_NEW= SML_DS_NEW.mean('concat_dims')
-    SML_stdevmod_NEW= SML_DS_NEW.std('concat_dims')  
+    SML_stdevmod_NEW= np.asarray(SML_DS_NEW.std('concat_dims'))  
             
 
         
@@ -192,10 +192,10 @@ def LatitudinalGraphs(Dataset_OLD, Dataset_NEW):
             
     # Calculate the mean and standard deviations for the reference and new models.   
     Ant_meanmod_OLD=Ant_DS_OLD.mean('concat_dims')
-    Ant_stdevmod_OLD= Ant_DS_OLD.std('concat_dims')
+    Ant_stdevmod_OLD= np.asarray(Ant_DS_OLD.std('concat_dims'))
     
     Ant_meanmod_NEW= Ant_DS_NEW.mean('concat_dims')
-    Ant_stdevmod_NEW= Ant_DS_NEW.std('concat_dims')
+    Ant_stdevmod_NEW= np.asarray(Ant_DS_NEW.std('concat_dims'))
     
     
     
@@ -247,10 +247,10 @@ def LatitudinalGraphs(Dataset_OLD, Dataset_NEW):
             
     # Calculate the mean and standard deviations for the reference and new models.
     NML_meanmod_OLD=NML_DS_OLD.mean('concat_dims')
-    NML_stdevmod_OLD= NML_DS_OLD.std('concat_dims')
+    NML_stdevmod_OLD= np.asarray(NML_DS_OLD.std('concat_dims'))
     
     NML_meanmod_NEW= NML_DS_NEW.mean('concat_dims')
-    NML_stdevmod_NEW= NML_DS_NEW.std('concat_dims')
+    NML_stdevmod_NEW= np.asarray(NML_DS_NEW.std('concat_dims'))
     
     
     
