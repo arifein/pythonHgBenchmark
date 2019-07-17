@@ -65,13 +65,12 @@ def HgMeanSurfaceTGM (Dataset_OLD, Dataset_NEW, Variable=['IJ_AVG_S_Hg0', 'IJ_AV
     # Find the absolute difference between the reference and new model.
     Abs_diff = NEW_sum - OLD_sum
     # Find the absolute maximum value of the absolute difference. 
-    Abs_MaxVal= np.max(np.abs(Abs_diff))
-    
+    Abs_MaxVal= np.max(np.abs(Abs_diff.values))
     
     # Find the percent difference of the models.  
     Perc_diff = (Abs_diff / OLD_sum)*100
     # Find the absolute maximum value of the percent  difference. 
-    Perc_MaxVal= np.max(np.abs(Perc_diff))
+    Perc_MaxVal= np.max(np.abs(Perc_diff.values))
     
     
     
@@ -106,7 +105,7 @@ def HgMeanSurfaceTGM (Dataset_OLD, Dataset_NEW, Variable=['IJ_AVG_S_Hg0', 'IJ_AV
     # Plot the absolute difference using a geograpical map.
     ax = plt.subplot(223, projection=ccrs.PlateCarree())
     im= Abs_diff.plot.imshow(x='lon',y='lat', ax=ax,transform=ccrs.PlateCarree(),  cmap='RdBu',
-                             vmin=(-Abs_MaxVal), vmax=(Abs_MaxVal),
+                             vmin=-Abs_MaxVal, vmax=Abs_MaxVal,
                           cbar_kwargs={'orientation':'horizontal',
                                       'ticklocation':'auto',
                                       'label': Units})

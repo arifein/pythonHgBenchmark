@@ -46,13 +46,13 @@ def GeneralHgMeanSurface (Dataset_OLD, Dataset_NEW, Variable, Units, Unit_Conver
     # Find the absolute difference between the reference and new model.
     Abs_diff = NEW_sum - OLD_sum
     # Find the absolute maximum value of the absolute difference. 
-    Abs_MaxVal= np.max(np.abs(Abs_diff))
+    Abs_MaxVal= np.max(np.abs(Abs_diff.values))
     
     
     # Find the percent difference of the models.  
     Perc_diff = (Abs_diff / OLD_sum)*100
     # Find the absolute maximum value of the percent  difference. 
-    Perc_MaxVal= np.max(np.abs(Perc_diff))
+    Perc_MaxVal= np.max(np.abs(Perc_diff.values))
     
     
     
