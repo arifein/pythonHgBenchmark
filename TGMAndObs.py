@@ -3,20 +3,22 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import numpy as np
 import pandas as pd
-import xbpch
-import cartopy.crs as ccrs
 from matplotlib import colorbar, colors
-import statistics
-from sklearn.metrics import r2_score
+from scipy import stats
 from SiteLevels import levels
-def SurfaceObsTGM(Old_Dataset, New_Dataset):
+def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     """ Plot the mean surface TGM for mercury against different sites for the reference and new models. Also calculate
     the mean for both models, the mean of the observations and the coefficient of determination. 
     
-        Args: 
-    Dataset_OLD (str) : Reference Model bpch file
-    Dataset_NEW (str) : New Model bpch file 
+    Parameters
+    ----------
+    Dataset_OLD : string
+        Reference Model xarray dataset
+    Dataset_NEW : string
+        New Model xarray dataset 
     
+    Year : int or list of int, optional
+        Optional parameter to only select subset of years
     
     """    
     # Read in the data for the observed sites
@@ -26,23 +28,56 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset):
     Levels= (0.75, 0.95, 1.15, 1.35, 1.55, 1.75, 2.30, 2.90, 3.50)
     SiteID=AnHgObs.SiteID
     
-    # Make a variable for the unit conversion factor to obtain ng/m^3
-    Unit_Conversion= 8.93
+    # Make a variable for the unit conversion factor from vmr to  ng/m^3
+    # Now more traceable
+    R = 8.314462 # m^3 Pa K^-1 mol ^-1
+    MW_Hg = 200.59 # g mol^-1
+    ng_g = 1e9 # ng/g
+    
+    stdpressure = 101325 # Pascals
+    stdtemp = 273.15 # Kelvins
+    
+    unit_conv = stdpressure / R / stdtemp * MW_Hg * ng_g # converter from vmr to ng m^-3
+    
     SiteID=AnHgObs.SiteID
-        # Extract and add together Hg0 and Hg2 at the surface from the reference model multiplying by the unit converion factor 
-        # to obtain values for Total Gaseous Mercury.
-    for i in range (len(SiteID)):
-        OLD_Hg0 =((Old_Dataset['IJ_AVG_S_Hg0'].isel(lev=levels(SiteID[i])).mean('time')) * Unit_Conversion)                              
-        OLD_Hg2 =((Old_Dataset['IJ_AVG_S_Hg2'].isel(lev=levels(SiteID[i])).mean('time')) * Unit_Conversion)                
-        TGM_Old = (OLD_Hg0 + OLD_Hg2)
     
-    
-        # Extract and add together Hg0 and Hg2 at the surface from the new model multiplying by the unit converion factor 
-        # to obtain values for Total Gaseous Mercury.
-        NEW_Hg0 =((New_Dataset['IJ_AVG_S_Hg0'].isel(lev=levels(SiteID[i])).mean('time') * Unit_Conversion))                         
-        NEW_Hg2 =((New_Dataset['IJ_AVG_S_Hg2'].isel(lev=levels(SiteID[i])).mean('time') * Unit_Conversion))
-        TGM_New = NEW_Hg0 + NEW_Hg2
-    
+    # Extract and add together Hg0 and Hg2 at the surface from the reference model multiplying by the unit converion factor 
+    # to obtain values for Total Gaseous Mercury.
+    if Year is not None: # take average over subset of years
+        # OLD simulation
+        OLD_Hg0 = Old_Dataset.SpeciesConc_Hg0.isel(lev=0).\
+                       sel(time=Old_Dataset.time.dt.year.isin(Year)).\
+                       mean('time') * unit_conv
+                       
+        OLD_Hg2 = Old_Dataset.SpeciesConc_Hg2.isel(lev=0).\
+                       sel(time=Old_Dataset.time.dt.year.isin(Year)).\
+                       mean('time') * unit_conv
+        # NEW simulation                       
+        NEW_Hg0 = New_Dataset.SpeciesConc_Hg0.isel(lev=0).\
+                       sel(time=New_Dataset.time.dt.year.isin(Year)).\
+                       mean('time') * unit_conv
+                
+        NEW_Hg2 = New_Dataset.SpeciesConc_Hg2.isel(lev=0).\
+                       sel(time=New_Dataset.time.dt.year.isin(Year)).\
+                       mean('time') * unit_conv
+                       
+    else:
+        # OLD simulation        
+        OLD_Hg0 = Old_Dataset.SpeciesConc_Hg0.isel(lev=0).\
+                       mean('time') * unit_conv
+                      
+        OLD_Hg2 = Old_Dataset.SpeciesConc_Hg2.isel(lev=0).\
+                       mean('time') * unit_conv
+        # NEW simulation
+        NEW_Hg0 = New_Dataset.SpeciesConc_Hg0.isel(lev=0).\
+                       mean('time') * unit_conv
+                      
+        NEW_Hg2 = New_Dataset.SpeciesConc_Hg2.isel(lev=0).\
+                       mean('time') * unit_conv
+                       
+    TGM_Old = (OLD_Hg0 + OLD_Hg2) # TGM is sum of Hg0 and Hg2
+    TGM_New = (NEW_Hg0 + NEW_Hg2) # TGM is sum of Hg0 and Hg2
+        
         
     # Find the absolute difference between the reference and new model.
     Abs_diff = TGM_New - TGM_Old
@@ -69,7 +104,7 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset):
     MeObsDP=round(Meanobvs,2)
     
     # Find the standard deviation of the observed Hg and round this value to 2 decimal places.
-    ErrObs= round(statistics.stdev(Value),2)
+    StdObs= round(np.std(Value),2)
 
     # Create an array of numpy zeros to fill for the reference and new models based on the amount of observed values.
     OLDval=np.zeros(len(Lati))
@@ -87,39 +122,42 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset):
     
     # Find the standard deviation of the values extracted from the reference and new model and round this value 
     # to 2 decimal places.
-    ErrOLD= round(statistics.stdev(OLDval),2)
-    ErrNEW= round(statistics.stdev(NEWval),2)
+    ErrOLD= round(np.std(OLDval),2)
+    ErrNEW= round(np.std(NEWval),2)
 
     # Round the means of the values extracted from the reference and new models to decimal places.
     MeMoOl=round(MeanModOld,2)
     MeMoNe= round(MeanModNew,2)
 
-    # Find the coefficient of determination for the reference and new models/
-    CoeffOld= r2_score(Value, OLDval)
-    CoeffNew= r2_score(Value, NEWval)
+    # Find the correlation coefficient 
+    corrOld, _ = stats.pearsonr(Value, OLDval)
+    corrNew, _ = stats.pearsonr(Value, NEWval)    
+    # Find the coefficient of determination for the reference and new models
+    CoeffOld= corrOld ** 2
+    CoeffNew= corrNew ** 2
 
 
     # Create text strings for relevant information: mean, coefficient of determination (rounding to 3DP),
-    textstr1= "Mean Obs. = %s +- %s $ng/m^3$ "%(MeObsDP, ErrObs)
-    textstr2= "Mean Mod. = %s +- %s $ng/m^3$ "%(MeMoOl ,ErrOLD)
-    textstr3= "Mean Mod. = %s +- %s $ng/m^3$ "%(MeMoNe ,ErrNEW)
+    textstr1= "Mean Obs. = %s $\pm$ %s ng m$^{-3}$ "%(MeObsDP, StdObs)
+    textstr2= "Mean Mod. = %s $\pm$ %s ng m$^{-3}$ "%(MeMoOl ,ErrOLD)
+    textstr3= "Mean Mod. = %s $\pm$ %s ng m$^{-3}$ "%(MeMoNe ,ErrNEW)
     textstr4= "Terrestrial $R^2$= %s" %(round(CoeffOld,3))
     textstr5= "Terrestrial $R^2$= %s" %(round(CoeffNew,3))
 
-
-
     # Add a figure.
-    OLDMAP = plt.figure()
+    OLDMAP = plt.figure(figsize=[10,4.5])
     
     # Add a geographical projection on the map.
     ax = OLDMAP.add_subplot(111, projection=ccrs.PlateCarree())
     
     # Plot the reference model on the projection.
-    im=TGM_Old.plot.contourf( x='lon',y='lat', ax=ax, levels= Levels, transform=ccrs.PlateCarree(), cmap='viridis', 
+    im = TGM_Old.plot.contourf( x='lon',y='lat', ax=ax, levels= Levels, transform=ccrs.PlateCarree(), cmap='viridis', 
                                  cbar_kwargs={'orientation':'horizontal',
                                            'ticklocation':'auto',
-                                      'label':"Not Linear $ng/m^3$ "})
-    
+                                      'label':"Not Linear ng m$^{-3}$ ",
+                                      'fraction':0.046,
+                                      'pad':0.04})
+     
     # Add text to the plot.
     plt.text(200,-50,textstr1, fontsize=14)
     plt.text(200,-75,textstr2, fontsize=14)
@@ -136,15 +174,18 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset):
     
     # Show the coastlines.
     ax.coastlines()
+
+    # Adjust to give text space
+    OLDMAP.subplots_adjust(right=0.6, left=0.05)
+    plt.tight_layout()
     
     # Show the plot.
-    plt.show()
+    OLDMAP.show()
     
 
     
     # Add a figure.
-    NEWMAP = plt.figure()
-    
+    NEWMAP = plt.figure(figsize=[10,4.5])
     # Add a geographical projection on the map.
     ax = NEWMAP.add_subplot(111, projection=ccrs.PlateCarree())
     
@@ -152,7 +193,9 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset):
     im=TGM_New.plot.contourf(x='lon',y='lat',levels=Levels, ax=ax,transform=ccrs.PlateCarree(), cmap='viridis', 
                          cbar_kwargs={'orientation':'horizontal',
                                       'ticklocation':'auto',
-                                      'label':"Not Linear $ng/m^3$ "})
+                                      'label':"Not Linear ng m$^{-3}$ ",
+                                      'fraction':0.046,
+                                      'pad':0.04})
     
     # Add text to the plot.
     plt.text(200,-50,textstr1, fontsize=14)
@@ -171,8 +214,11 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset):
     # Show the coastlines.
     ax.coastlines()
     
+    # Adjust to give text space
+    NEWMAP.subplots_adjust(right=0.6, left=0.05)
+    plt.tight_layout()
     # Show the plot.
-    plt.show()  
+    NEWMAP.show()  
     
 
     return 
