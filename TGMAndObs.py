@@ -41,39 +41,29 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     
     SiteID=AnHgObs.SiteID
     
+    # Allow subsetting for years, if inputted into the function
+    if Year is not None: # take average over subset of years
+        # OLD simulation        
+        OLD_Hg0_yr = Old_Dataset.SpeciesConc_Hg0.sel(time=Old_Dataset.time.dt.year.isin(Year))
+        OLD_Hg2_yr = Old_Dataset.SpeciesConc_Hg2.sel(time=Old_Dataset.time.dt.year.isin(Year))
+        # NEW simulation        
+        NEW_Hg0_yr = New_Dataset.SpeciesConc_Hg0.sel(time=New_Dataset.time.dt.year.isin(Year))
+        NEW_Hg2_yr = New_Dataset.SpeciesConc_Hg2.sel(time=New_Dataset.time.dt.year.isin(Year))
+    else: # use all years
+        # OLD simulation        
+        OLD_Hg0_yr = Old_Dataset.SpeciesConc_Hg0
+        OLD_Hg2_yr = Old_Dataset.SpeciesConc_Hg2
+        # NEW simulation                
+        NEW_Hg0_yr = New_Dataset.SpeciesConc_Hg0
+        NEW_Hg2_yr = New_Dataset.SpeciesConc_Hg2
+   
     # Extract and add together Hg0 and Hg2 at the surface from the reference model multiplying by the unit converion factor 
     # to obtain values for Total Gaseous Mercury.
-    if Year is not None: # take average over subset of years
-        # OLD simulation
-        OLD_Hg0 = Old_Dataset.SpeciesConc_Hg0.isel(lev=0).\
-                       sel(time=Old_Dataset.time.dt.year.isin(Year)).\
-                       mean('time') * unit_conv
-                       
-        OLD_Hg2 = Old_Dataset.SpeciesConc_Hg2.isel(lev=0).\
-                       sel(time=Old_Dataset.time.dt.year.isin(Year)).\
-                       mean('time') * unit_conv
-        # NEW simulation                       
-        NEW_Hg0 = New_Dataset.SpeciesConc_Hg0.isel(lev=0).\
-                       sel(time=New_Dataset.time.dt.year.isin(Year)).\
-                       mean('time') * unit_conv
-                
-        NEW_Hg2 = New_Dataset.SpeciesConc_Hg2.isel(lev=0).\
-                       sel(time=New_Dataset.time.dt.year.isin(Year)).\
-                       mean('time') * unit_conv
-                       
-    else:
-        # OLD simulation        
-        OLD_Hg0 = Old_Dataset.SpeciesConc_Hg0.isel(lev=0).\
-                       mean('time') * unit_conv
-                      
-        OLD_Hg2 = Old_Dataset.SpeciesConc_Hg2.isel(lev=0).\
-                       mean('time') * unit_conv
-        # NEW simulation
-        NEW_Hg0 = New_Dataset.SpeciesConc_Hg0.isel(lev=0).\
-                       mean('time') * unit_conv
-                      
-        NEW_Hg2 = New_Dataset.SpeciesConc_Hg2.isel(lev=0).\
-                       mean('time') * unit_conv
+    OLD_Hg0 = OLD_Hg0_yr.isel(lev=0).mean('time') * unit_conv                 
+    OLD_Hg2 = OLD_Hg2_yr.isel(lev=0).mean('time') * unit_conv
+
+    NEW_Hg0 = NEW_Hg0_yr.isel(lev=0).mean('time') * unit_conv                 
+    NEW_Hg2 = NEW_Hg2_yr.isel(lev=0).mean('time') * unit_conv
                        
     TGM_Old = (OLD_Hg0 + OLD_Hg2) # TGM is sum of Hg0 and Hg2
     TGM_New = (NEW_Hg0 + NEW_Hg2) # TGM is sum of Hg0 and Hg2
@@ -112,9 +102,26 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     
     # Create a for loop to extract values from the models based on the latitude and longitude of the observations.
     for i in range(len(Lati)):
-        OLDval[i]= (TGM_Old.sel(lat=[Lati[i]], lon=[Long[i]], method='nearest'))
-        NEWval[i]= (TGM_New.sel(lat=[Lati[i]], lon=[Long[i]], method='nearest'))
-
+        lev_site = levels(SiteID[i]) # get level of site
+        if lev_site == 0: # surface site
+            OLDval[i]= TGM_Old.sel(lat=[Lati[i]], lon=[Long[i]], method='nearest')
+            NEWval[i]= TGM_New.sel(lat=[Lati[i]], lon=[Long[i]], method='nearest')
+        else: # other level, need to reload TGM
+            OLD_Hg0_lv = OLD_Hg0_yr.isel(lev=lev_site).\
+                sel(lat=[Lati[i]], lon=[Long[i]], method='nearest').mean('time')\
+                * unit_conv
+            OLD_Hg2_lv = OLD_Hg2_yr.isel(lev=lev_site).\
+                sel(lat=[Lati[i]], lon=[Long[i]], method='nearest').mean('time')\
+                * unit_conv
+            NEW_Hg0_lv = NEW_Hg0_yr.isel(lev=lev_site).\
+                sel(lat=[Lati[i]], lon=[Long[i]], method='nearest').mean('time')\
+                * unit_conv
+            NEW_Hg2_lv = NEW_Hg2_yr.isel(lev=lev_site).\
+                sel(lat=[Lati[i]], lon=[Long[i]], method='nearest').mean('time')\
+                * unit_conv  
+            # Calculate TGM values as sum of Hg0 and Hg2     
+            OLDval[i]= OLD_Hg0_lv + OLD_Hg2_lv
+            NEWval[i]= NEW_Hg0_lv + NEW_Hg2_lv
 
     # Take the mean of the values extracted from the reference and new models. 
     MeanModOld=(np.mean(OLDval))

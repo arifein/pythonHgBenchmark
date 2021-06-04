@@ -13,7 +13,7 @@ from load_Hgmodel_data import open_Hg_spc
 from TGMAndObs import SurfaceObsTGM
 
 fn_old = '../../GEOS-Chem_runs/run0003/OutputDir/GEOSChem.SpeciesConc.alltime_m.nc4'
-fn_new = '../../GEOS-Chem_runs/run0006/OutputDir/GEOSChem.SpeciesConc.alltime_m.nc4'
+fn_new = '../../GEOS-Chem_runs/run0007/OutputDir/GEOSChem.SpeciesConc.alltime_m.nc4'
 
 ds1, ds2 = open_Hg_spc(fn_old, fn_new)
 #%%
