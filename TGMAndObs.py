@@ -228,4 +228,4 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     NEWMAP.show()  
     
 
-    return 
+    return OLDMAP, NEWMAP

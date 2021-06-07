@@ -11,10 +11,19 @@ os.chdir('/Users/arifeinberg/target2/fs03/d0/arifein/python/pythonHgBenchmark')
 
 from load_Hgmodel_data import open_Hg_spc
 from TGMAndObs import SurfaceObsTGM
+from matplotlib.backends.backend_pdf import PdfPages
 
-fn_old = '../../GEOS-Chem_runs/run0003/OutputDir/GEOSChem.SpeciesConc.alltime_m.nc4'
-fn_new = '../../GEOS-Chem_runs/run0007/OutputDir/GEOSChem.SpeciesConc.alltime_m.nc4'
+run_old = '0003'
+run_new = '0007'
+fn_old = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.SpeciesConc.alltime_m.nc4'
+fn_new = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.SpeciesConc.alltime_m.nc4'
 
 ds1, ds2 = open_Hg_spc(fn_old, fn_new)
 #%%
-SurfaceObsTGM(ds1, ds2, 2015)
+plot1, plot2 = SurfaceObsTGM(ds1, ds2, 2015)
+
+# Save all figures to one PDF file
+pp  = PdfPages(('Figures/benchmark_' + run_old + '_' + run_new + '.pdf'))
+pp.savefig(plot1)
+pp.savefig(plot2)
+pp.close()

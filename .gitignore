@@ -3,3 +3,5 @@ __pycache__/*
 *.dat
 .ipynb_checkpoints/*
 .git/*
+.DS_Store
+._.DS_Store
