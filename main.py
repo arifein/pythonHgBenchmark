@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Jun  4 14:20:15 2021
-
+Main file for running Hg benchmark in python and producing plots
 @author: arifeinberg
 """
 
@@ -20,10 +20,12 @@ fn_new = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.SpeciesConc
 
 ds1, ds2 = open_Hg_spc(fn_old, fn_new)
 #%%
-plot1, plot2 = SurfaceObsTGM(ds1, ds2, 2015)
+plot1, plot2, plot3 = SurfaceObsTGM(ds1, ds2, 2015)
 
 # Save all figures to one PDF file
 pp  = PdfPages(('Figures/benchmark_' + run_old + '_' + run_new + '.pdf'))
 pp.savefig(plot1)
 pp.savefig(plot2)
+pp.savefig(plot3)
+
 pp.close()

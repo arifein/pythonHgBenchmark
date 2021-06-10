@@ -3,9 +3,11 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import numpy as np
 import pandas as pd
-from matplotlib import colorbar, colors
 from scipy import stats
 from SiteLevels import levels
+from diff_plots_Hg import diff_plots
+from matplotlib import colors
+
 def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     """ Plot the mean surface TGM for mercury against different sites for the reference and new models. Also calculate
     the mean for both models, the mean of the observations and the coefficient of determination. 
@@ -227,5 +229,8 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     # Show the plot.
     NEWMAP.show()  
     
-
-    return OLDMAP, NEWMAP
+    # Create difference plot for TGM at surface 
+    diff_MAP = diff_plots(TGM_Old, TGM_New)
+    
+    # return all plots, for saving in PDF 
+    return OLDMAP, NEWMAP, diff_MAP
