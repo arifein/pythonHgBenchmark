@@ -13,6 +13,7 @@ from load_Hgmodel_data import open_Hg_spc
 from TGMAndObs import SurfaceObsTGM
 from Hg2Plot import SurfaceHg2
 from Latitudinal_Graphs import LatitudinalGraphs
+from PlotSeasonSites import PlotSeasonSites
 from matplotlib.backends.backend_pdf import PdfPages
 
 #%% Opening Hg species datasets
@@ -31,6 +32,9 @@ plot4 = SurfaceHg2(ds1, ds2, 2015)
 #%% Plot of seasonal cycle for different lat regions
 plot5 = LatitudinalGraphs(ds1, ds2, 2015)
 
+#%% Plot seasonal cycles of TGM for all sites
+plot6 = PlotSeasonSites(ds1, ds2, 2015)
+
 #%% Save all figures to one PDF file
 pp  = PdfPages(('Figures/benchmark_' + run_old + '_' + run_new + '.pdf'))
 pp.savefig(plot1, bbox_inches = 'tight')
@@ -38,5 +42,6 @@ pp.savefig(plot2, bbox_inches = 'tight')
 pp.savefig(plot3, bbox_inches = 'tight')
 pp.savefig(plot4, bbox_inches = 'tight')
 pp.savefig(plot5, bbox_inches = 'tight')
+pp.savefig(plot6, bbox_inches = 'tight')
 
 pp.close()

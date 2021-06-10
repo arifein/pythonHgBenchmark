@@ -159,7 +159,7 @@ def filter_sites_region(Region, Hgobs, Dataset_OLD, Dataset_NEW, Year = None):
       Reg_OLD_mod = (OLD_Hg0_site + OLD_Hg2_site) * unit_conv
       Reg_NEW_mod = (NEW_Hg0_site + NEW_Hg2_site) * unit_conv
 
-      #calculate climatology (needed if more than one year are averaged)
+      # calculate climatology (needed if more than one year are averaged)
       Reg_OLD_clim = Reg_OLD_mod.groupby('time.month').mean() 
       Reg_NEW_clim = Reg_NEW_mod.groupby('time.month').mean() 
    
