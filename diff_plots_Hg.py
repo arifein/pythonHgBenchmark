@@ -35,61 +35,69 @@ def diff_plots (Var_OLD, Var_NEW, Units="ng/m$^3$", Title="Surface TGM"):
     ref_maxval = round_sig(np.percentile(Var_OLD,99))
     
     # Plot the four graphs as subplots.
-    TGMGraph = plt.figure(figsize=(15,10))
+    TGMGraph,  axes = plt.subplots(2, 2, figsize=[16,12],
+                                   subplot_kw=dict(projection=ccrs.PlateCarree()),
+                                   gridspec_kw=dict(hspace=0.2, wspace=0.1))
+    axes = axes.flatten()
     
     # Plot the reference model and use a geographical map.
-    ax = plt.subplot(221, projection=ccrs.PlateCarree())
-    im=Var_OLD.plot.contourf(x='lon',y='lat',levels=11, ax=ax, 
+    ax = axes[0]
+    im = Var_OLD.plot.contourf(x='lon',y='lat',levels=11, ax=ax, 
                              vmin=ref_minval, vmax=ref_maxval,
-                             transform=ccrs.PlateCarree(), cmap='viridis', 
-                              
+                             transform=ccrs.PlateCarree(), cmap='viridis',                               
                              cbar_kwargs={'orientation':'horizontal',
-                                      'label': Units})  
+                                      'label': Units,
+                                      'fraction':0.046,
+                                      'pad':0.04})
     # Add a title 
-    plt.title(' Reference Model Version: '+Title)     
+    ax.set_title(' Reference Model Version: '+Title)     
     # Add the coastlines.
     ax.coastlines()
     
     
     
     # Plot the new model using a geographical map.       
-    ax = plt.subplot(222, projection=ccrs.PlateCarree())
-    im= Var_NEW.plot.contourf(x='lon',y='lat',levels=11, ax=ax,
+    ax = axes[1]
+    im = Var_NEW.plot.contourf(x='lon',y='lat',levels=11, ax=ax,
                               vmin=ref_minval, vmax=ref_maxval,
                               cmap='viridis', transform=ccrs.PlateCarree(),
                               cbar_kwargs={'orientation':'horizontal',
-                                      'label': Units})
+                                      'label': Units,
+                                      'fraction':0.046,
+                                      'pad':0.04})
     # Add a title.
-    plt.title('New Model Version: '+ Title)
+    ax.set_title('New Model Version: '+ Title)
     # Add the coastlines.
     ax.coastlines()
     
     # Plot the absolute difference using a geograpical map.
-    ax = plt.subplot(223, projection=ccrs.PlateCarree())
-    im= Abs_diff.plot.imshow(x='lon',y='lat', ax=ax,transform=ccrs.PlateCarree(),  cmap='RdBu_r',
+    ax = axes[2]
+    im = Abs_diff.plot.imshow(x='lon',y='lat', ax=ax,transform=ccrs.PlateCarree(),  cmap='RdBu_r',
                              vmin=-Abs_MaxVal, vmax=Abs_MaxVal,
                           cbar_kwargs={'orientation':'horizontal',
                                       'ticklocation':'auto',
-                                      'label': Units})
+                                      'label': Units,
+                                      'fraction':0.046,
+                                      'pad':0.04})
     # Add a title.
-    plt.title("Absolute Difference")
+    ax.set_title("Absolute Difference")
     # Add the coastlines.
     ax.coastlines()
      
     # Plot the percent difference using a geographical map.
-    ax = plt.subplot(224, projection=ccrs.PlateCarree())
-    im= Perc_diff.plot.imshow(x='lon',y='lat',ax=ax,transform=ccrs.PlateCarree(), cmap='RdBu_r',
+    ax = axes[3]
+    im = Perc_diff.plot.imshow(x='lon',y='lat',ax=ax,transform=ccrs.PlateCarree(), cmap='RdBu_r',
                               vmin=(-Perc_MaxVal), vmax=(Perc_MaxVal),
                         cbar_kwargs={'orientation':'horizontal',
                                       'ticklocation':'auto',
-                                      'label':"%" })
+                                      'label':"%" ,
+                                      'fraction':0.046,
+                                      'pad':0.04})
     # Add a title.
-    plt.title("Percent Difference (%)")
+    ax.set_title("Percent Difference (%)")
     # Add the coastlines. 
     ax.coastlines()
- 
-    plt.tight_layout()
-    
+     
     # Show the four subplots.
     plt.show()
 

@@ -14,10 +14,10 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     
     Parameters
     ----------
-    Dataset_OLD : string
-        Reference Model xarray dataset
-    Dataset_NEW : string
-        New Model xarray dataset 
+    Dataset_OLD : xarray dataset
+        Reference Model dataset
+    Dataset_NEW : xarray dataset
+        New Model dataset 
     
     Year : int or list of int, optional
         Optional parameter to only select subset of years
@@ -59,7 +59,8 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
         NEW_Hg0_yr = New_Dataset.SpeciesConc_Hg0
         NEW_Hg2_yr = New_Dataset.SpeciesConc_Hg2
    
-    # Extract and add together Hg0 and Hg2 at the surface from the reference model multiplying by the unit converion factor 
+    # Extract and add together Hg0 and Hg2 at the surface from both 
+    # model simulations, multiplying by the unit conversion factor 
     # to obtain values for Total Gaseous Mercury.
     OLD_Hg0 = OLD_Hg0_yr.isel(lev=0).mean('time') * unit_conv                 
     OLD_Hg2 = OLD_Hg2_yr.isel(lev=0).mean('time') * unit_conv
@@ -69,18 +70,6 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
                        
     TGM_Old = (OLD_Hg0 + OLD_Hg2) # TGM is sum of Hg0 and Hg2
     TGM_New = (NEW_Hg0 + NEW_Hg2) # TGM is sum of Hg0 and Hg2
-        
-        
-    # Find the absolute difference between the reference and new model.
-    Abs_diff = TGM_New - TGM_Old
-    # Find the absolute maximum value of the absolute difference. 
-    Abs_MaxVal= np.max(np.abs(Abs_diff))
-        
-    
-    # Find the percent difference of the models.  
-    Perc_diff = (Abs_diff / TGM_Old)*100
-    # Find the absolute maximum value of the percent  difference. 
-    Perc_MaxVal= np.max(np.abs(Perc_diff))
     
     
     
