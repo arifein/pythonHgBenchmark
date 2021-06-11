@@ -1,6 +1,7 @@
 Mercury Benchmarking for Python
 
 -Brittany Walker started translating GEOS-Chem IDL benchmark code to Python (Feb 2019)
+
 -Ari Feinberg continued adding new benchmark functionalities (June 2021)
 
 This directory contains a set of python scripts used to benchmark new and updated versions of the GEOS-Chem mercury model. 
