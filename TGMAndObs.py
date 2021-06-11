@@ -40,9 +40,7 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     stdtemp = 273.15 # Kelvins
     
     unit_conv = stdpressure / R / stdtemp * MW_Hg * ng_g # converter from vmr to ng m^-3
-    
-    SiteID=AnHgObs.SiteID
-    
+        
     # Allow subsetting for years, if inputted into the function
     if Year is not None: # take average over subset of years
         # OLD simulation        
@@ -62,14 +60,14 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     # Extract and add together Hg0 and Hg2 at the surface from both 
     # model simulations, multiplying by the unit conversion factor 
     # to obtain values for Total Gaseous Mercury.
-    OLD_Hg0 = OLD_Hg0_yr.isel(lev=0).mean('time') * unit_conv                 
-    OLD_Hg2 = OLD_Hg2_yr.isel(lev=0).mean('time') * unit_conv
+    OLD_Hg0 = OLD_Hg0_yr.isel(lev=0).mean('time')                
+    OLD_Hg2 = OLD_Hg2_yr.isel(lev=0).mean('time')
 
-    NEW_Hg0 = NEW_Hg0_yr.isel(lev=0).mean('time') * unit_conv                 
-    NEW_Hg2 = NEW_Hg2_yr.isel(lev=0).mean('time') * unit_conv
+    NEW_Hg0 = NEW_Hg0_yr.isel(lev=0).mean('time')                
+    NEW_Hg2 = NEW_Hg2_yr.isel(lev=0).mean('time')
                        
-    TGM_Old = (OLD_Hg0 + OLD_Hg2) # TGM is sum of Hg0 and Hg2
-    TGM_New = (NEW_Hg0 + NEW_Hg2) # TGM is sum of Hg0 and Hg2
+    TGM_Old = (OLD_Hg0 + OLD_Hg2) * unit_conv # TGM is sum of Hg0 and Hg2
+    TGM_New = (NEW_Hg0 + NEW_Hg2) * unit_conv # TGM is sum of Hg0 and Hg2
     
     
     

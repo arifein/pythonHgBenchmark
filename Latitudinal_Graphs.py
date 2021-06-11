@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from SiteLevels import levels
 
-def LatitudinalGraphs(Dataset_OLD, Dataset_NEW, Year = None):
+def Seasonal_Lat_Regions(Dataset_OLD, Dataset_NEW, Year = None):
     """Plot observational seasonal cycle against the model for different 
     latitudes (Southern Mid Latitiude, North Mid Latitude,
     Arctic, Antarctic).
@@ -185,9 +185,86 @@ def filter_sites_region(Region, Hgobs, Dataset_OLD, Dataset_NEW, Year = None):
     
     return Out_df
 
+def plot_gradient_TGM(Dataset_OLD, Dataset_NEW, Year = None):
+    """Plot meridional gradient of TGM at surface from netcdf files of model simulation
+    
+    Parameters
+    ----------
+    Dataset_OLD : xarray dataset
+        Reference Model dataset
+    Dataset_NEW : xarray dataset
+        New Model dataset 
+    
+    Year : int or list of int, optional
+        Optional parameter to only select subset of years        
+    """
+    # First load surface TGM from model simulations
+    # Make a variable for the unit conversion factor from vmr to  ng/m^3
+    # Now more traceable
+    R = 8.314462 # m^3 Pa K^-1 mol ^-1
+    MW_Hg = 200.59 # g mol^-1
+    ng_g = 1e9 # ng/g
+    
+    stdpressure = 101325 # Pascals
+    stdtemp = 273.15 # Kelvins
+    
+    unit_conv = stdpressure / R / stdtemp * MW_Hg * ng_g # converter from vmr to ng m^-3
+        
+    # Allow subsetting for years, if inputted into the function
+    if Year is not None: # take average over subset of years
+        # OLD simulation        
+        OLD_Hg0_yr = Dataset_OLD.SpeciesConc_Hg0.sel(time=Dataset_OLD.time.dt.year.isin(Year))
+        OLD_Hg2_yr = Dataset_OLD.SpeciesConc_Hg2.sel(time=Dataset_OLD.time.dt.year.isin(Year))
+        # NEW simulation        
+        NEW_Hg0_yr = Dataset_NEW.SpeciesConc_Hg0.sel(time=Dataset_NEW.time.dt.year.isin(Year))
+        NEW_Hg2_yr = Dataset_NEW.SpeciesConc_Hg2.sel(time=Dataset_NEW.time.dt.year.isin(Year))
+    else: # use all years
+        # OLD simulation        
+        OLD_Hg0_yr = Dataset_OLD.SpeciesConc_Hg0
+        OLD_Hg2_yr = Dataset_OLD.SpeciesConc_Hg2
+        # NEW simulation                
+        NEW_Hg0_yr = Dataset_NEW.SpeciesConc_Hg0
+        NEW_Hg2_yr = Dataset_NEW.SpeciesConc_Hg2
+   
+    # Extract and add together Hg0 and Hg2 at the surface from both 
+    # model simulations, multiplying by the unit conversion factor 
+    # to obtain values for Total Gaseous Mercury.
+    OLD_Hg0 = OLD_Hg0_yr.isel(lev=0).mean('time')                 
+    OLD_Hg2 = OLD_Hg2_yr.isel(lev=0).mean('time')
 
+    NEW_Hg0 = NEW_Hg0_yr.isel(lev=0).mean('time')                 
+    NEW_Hg2 = NEW_Hg2_yr.isel(lev=0).mean('time')
+                       
+    TGM_Old = (OLD_Hg0 + OLD_Hg2) * unit_conv # TGM is sum of Hg0 and Hg2
+    TGM_New = (NEW_Hg0 + NEW_Hg2) * unit_conv # TGM is sum of Hg0 and Hg2
+    
+    # Calulate zonal mean of the model results
+    TGM_Old_z = TGM_Old.mean('lon')
+    TGM_New_z = TGM_New.mean('lon')
 
+    # Load observational datasets
+    
+    # Read in the data for the Land-Based TGM
+    AnHgObs= pd.read_csv('data/TGMSiteAnnual.csv',skiprows=[0], na_values=(-9999))
+    AnHgObs.columns=['SiteID', 'Lat', 'Lon','Alt', 'TGM', 'Hg0']
 
+    # Plot zonal mean of model vs. observations
+    Grad_fig = plt.figure(figsize=[8,9])
+    
+    # Model lines
+    plt.plot(Dataset_OLD.lat, TGM_Old_z, color='blue')
+    plt.plot(Dataset_NEW.lat, TGM_New_z, color='red')
+    
+    # Observational sites
+    plt.plot(AnHgObs['Lat'], AnHgObs['Hg0'], 'gs')
+    
+    # Add a title and axes labels
+    plt.title('Surface TGM', fontsize=15)       
+    plt.xlabel('Latitude', fontsize=13)       
+    plt.ylabel('TGM (ng/m$^{3}$', fontsize=13)       
 
-
-
+    # Add a legend
+    plt.legend(['Reference Model','New Model', 'Land-based stations'],
+               fontsize=13)
+    
+    return Grad_fig

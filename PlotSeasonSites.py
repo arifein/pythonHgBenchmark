@@ -113,11 +113,11 @@ def PlotSeasonSites(Dataset_OLD, Dataset_NEW, Year = None):
        
         # Set tick labels to month names
         mn = ['J','F','M','A','M','J','J','A','S','O','N','D']            
-        iax.set_xticklabels(mn)
+        iax.set_xticklabels(mn, fontsize=8)
         
         if ii>34:
             iax.set_xlabel('Month')
     
     SeasonGraph.legend(['Reference Model','New Model', 'Observations'],
-                       loc = 'lower center') # add one legend to figure
+                       loc = 'upper left') # add one legend to figure
     return SeasonGraph

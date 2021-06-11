@@ -1,9 +1,5 @@
 import xarray as xr
-import matplotlib.pyplot as plt
-import cartopy.crs as ccrs
 import numpy as np
-import pandas as pd
-from scipy import stats
 from diff_plots_Hg import diff_plots
 
 def SurfaceHg2(Old_Dataset, New_Dataset, Year = None):
@@ -50,14 +46,14 @@ def SurfaceHg2(Old_Dataset, New_Dataset, Year = None):
    
     # Extract and add together Hg2 and HgP at the surface from both 
     # model simulations, multiplying by the unit conversion factor
-    OLD_HgP = OLD_HgP_yr.isel(lev=0).mean('time') * unit_conv                 
-    OLD_Hg2 = OLD_Hg2_yr.isel(lev=0).mean('time') * unit_conv
+    OLD_HgP = OLD_HgP_yr.isel(lev=0).mean('time')              
+    OLD_Hg2 = OLD_Hg2_yr.isel(lev=0).mean('time')
 
-    NEW_HgP = NEW_HgP_yr.isel(lev=0).mean('time') * unit_conv                 
-    NEW_Hg2 = NEW_Hg2_yr.isel(lev=0).mean('time') * unit_conv
+    NEW_HgP = NEW_HgP_yr.isel(lev=0).mean('time')                
+    NEW_Hg2 = NEW_Hg2_yr.isel(lev=0).mean('time')
                        
-    Hg2_tot_Old = (OLD_HgP + OLD_Hg2) # sum of HgP and Hg2
-    Hg2_tot_New = (NEW_HgP + NEW_Hg2) # sum of HgP and Hg2
+    Hg2_tot_Old = (OLD_HgP + OLD_Hg2) * unit_conv # sum of HgP and Hg2
+    Hg2_tot_New = (NEW_HgP + NEW_Hg2) * unit_conv # sum of HgP and Hg2
         
     # Create difference plot for Hg2 + HgP at surface 
     diff_MAP = diff_plots(Hg2_tot_Old, Hg2_tot_New, Units="pg/m$^3$",

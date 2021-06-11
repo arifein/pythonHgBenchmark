@@ -12,7 +12,7 @@ os.chdir('/Users/arifeinberg/target2/fs03/d0/arifein/python/pythonHgBenchmark')
 from load_Hgmodel_data import open_Hg_spc
 from TGMAndObs import SurfaceObsTGM
 from Hg2Plot import SurfaceHg2
-from Latitudinal_Graphs import LatitudinalGraphs
+from Latitudinal_Graphs import Seasonal_Lat_Regions, plot_gradient_TGM
 from PlotSeasonSites import PlotSeasonSites
 from matplotlib.backends.backend_pdf import PdfPages
 
@@ -22,18 +22,22 @@ run_new = '0007'
 fn_old = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.SpeciesConc.alltime_m.nc4'
 fn_new = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.SpeciesConc.alltime_m.nc4'
 
+year_to_analyze = 2015 # year to analyze from simulations 
 ds1, ds2 = open_Hg_spc(fn_old, fn_new)
 #%% Plots of surface TGM
-plot1, plot2, plot3 = SurfaceObsTGM(ds1, ds2, 2015)
+plot1, plot2, plot3 = SurfaceObsTGM(ds1, ds2, year_to_analyze)
 
 #%% Plot of surface Hg(II) + Hg(P)
-plot4 = SurfaceHg2(ds1, ds2, 2015)
+plot4 = SurfaceHg2(ds1, ds2, year_to_analyze)
 
 #%% Plot of seasonal cycle for different lat regions
-plot5 = LatitudinalGraphs(ds1, ds2, 2015)
+plot5 = Seasonal_Lat_Regions(ds1, ds2, year_to_analyze)
 
 #%% Plot seasonal cycles of TGM for all sites
-plot6 = PlotSeasonSites(ds1, ds2, 2015)
+plot6 = PlotSeasonSites(ds1, ds2, year_to_analyze)
+
+#%% Plot latitudinal gradient of TGM vs. observations
+plot7 = plot_gradient_TGM(ds1, ds2, year_to_analyze)
 
 #%% Save all figures to one PDF file
 pp  = PdfPages(('Figures/benchmark_' + run_old + '_' + run_new + '.pdf'))
@@ -43,5 +47,6 @@ pp.savefig(plot3, bbox_inches = 'tight')
 pp.savefig(plot4, bbox_inches = 'tight')
 pp.savefig(plot5, bbox_inches = 'tight')
 pp.savefig(plot6, bbox_inches = 'tight')
+pp.savefig(plot7, bbox_inches = 'tight')
 
 pp.close()
