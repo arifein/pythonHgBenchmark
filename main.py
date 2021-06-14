@@ -55,7 +55,7 @@ ds1_ls, ds2_ls = open_Hg(fn_old_LS, fn_new_LS) # load large-scale data
 
 ds1_cv, ds2_cv = open_Hg(fn_old_CV, fn_new_CV) # load convective data
 #%% Running wet deposition comparison plots
-wet_dep_plots(ds1_ls, ds1_cv, ds2_ls, ds2_cv)
+a, b = wet_dep_plots(ds1_ls, ds1_cv, ds2_ls, ds2_cv)
 
 #%% Save all figures to one PDF file
 pp  = PdfPages(('Figures/benchmark_' + run_old + '_' + run_new + '.pdf'))

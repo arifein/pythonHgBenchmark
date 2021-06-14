@@ -1,7 +1,10 @@
 import xarray as xr
+from calendar import monthrange
+import numpy as np
+
 def open_Hg (fn_OLD, fn_NEW):
     """ Open GEOSChem.* netcdf files for Hg species as an xarray dataset.
-    Can take either list of hourly/monthly/daily files (including *), or a 
+    Can take either list of monthly-averaged files (including *), or a 
     single time-concatenated file for each simulation.
 
     Parameters
@@ -47,3 +50,47 @@ def ds_sel_yr (ds, varname, Year):
         var_yr = ds[varname]
 
     return var_yr
+
+def annual_avg (var_to_avg):
+    """ Take annual average from monthly data, accounting for the difference in day number
+    Parameters
+    ----------
+    var_to_avg : xarray dataArray
+        variable to average
+    """
+    time_v = var_to_avg.time
+    
+    #first check that the data is in monthly time resolution
+    diff = time_v.dt.month[1]- time_v.dt.month[0]
+    
+    if diff > 1: # more than monthly time difference
+        print("Simulation needs to be in monthly-averaged time resolution. This data is super-monthly resolution")
+        sys.exit(1)
+    elif diff<1: # less than monthly time difference
+        print("Simulation needs to be in monthly-averaged time resolution. This data is sub-monthly resolution")
+        sys.exit(1)
+    else:
+        n_time = len(time_v) # number of timesteps
+        days_in_month = np.zeros(n_time)
+        for i in range(n_time):
+            # return number of days in month, accounting for leap year
+            days_in_month[i] = monthrange(int(time_v.dt.year[i]),int(time_v.dt.month[i]))[1] 
+        
+        #for weighted average, need this variable as an xarray
+        days_in_month_xr = xr.DataArray(
+            data=days_in_month,
+            dims=["time"],
+            coords=dict(
+                time=time_v
+                ),
+            attrs=dict(
+                description="Days in month of simulation",
+                ),
+            )
+        # adding weights to time dimension    
+        wgted_var = var_to_avg.weighted(days_in_month_xr)
+        # taking mean weighted by month length
+        wgted_mean = wgted_var.mean("time")
+        
+        return wgted_mean
+    
