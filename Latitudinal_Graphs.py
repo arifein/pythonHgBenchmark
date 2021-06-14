@@ -5,6 +5,7 @@ import pandas as pd
 from SiteLevels import levels
 from scipy.io import readsav
 import sys
+from load_Hgmodel_data import ds_sel_yr
 
 def Seasonal_Lat_Regions(Dataset_OLD, Dataset_NEW, Year = None):
     """Plot observational seasonal cycle against the model for different 
@@ -131,20 +132,10 @@ def filter_sites_region(Region, Hgobs, Dataset_OLD, Dataset_NEW, Year = None):
     obs_lon = All_region_df.Lon.unique()
     
     # Allow subsetting for years of the simulation, if inputted into the function
-    if Year is not None: # take average over subset of years
-      # OLD simulation        
-      OLD_Hg0_yr = Dataset_OLD.SpeciesConc_Hg0.sel(time=Dataset_OLD.time.dt.year.isin(Year))
-      OLD_Hg2_yr = Dataset_OLD.SpeciesConc_Hg2.sel(time=Dataset_OLD.time.dt.year.isin(Year))
-      # NEW simulation        
-      NEW_Hg0_yr = Dataset_NEW.SpeciesConc_Hg0.sel(time=Dataset_NEW.time.dt.year.isin(Year))
-      NEW_Hg2_yr = Dataset_NEW.SpeciesConc_Hg2.sel(time=Dataset_NEW.time.dt.year.isin(Year))
-    else: # use all years
-      # OLD simulation        
-      OLD_Hg0_yr = Dataset_OLD.SpeciesConc_Hg0
-      OLD_Hg2_yr = Dataset_OLD.SpeciesConc_Hg2
-      # NEW simulation                
-      NEW_Hg0_yr = Dataset_NEW.SpeciesConc_Hg0
-      NEW_Hg2_yr = Dataset_NEW.SpeciesConc_Hg2
+    OLD_Hg0_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg0', Year)
+    OLD_Hg2_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg2', Year)
+    NEW_Hg0_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg0', Year)
+    NEW_Hg2_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg2', Year)
     
     # Create datasets for seasonal TGM at each site for the ref and new models     
     for i in range (len(Region)): 
@@ -213,20 +204,10 @@ def plot_gradient_TGM(Dataset_OLD, Dataset_NEW, Year = None):
     unit_conv = stdpressure / R / stdtemp * MW_Hg * ng_g # converter from vmr to ng m^-3
         
     # Allow subsetting for years, if inputted into the function
-    if Year is not None: # take average over subset of years
-        # OLD simulation        
-        OLD_Hg0_yr = Dataset_OLD.SpeciesConc_Hg0.sel(time=Dataset_OLD.time.dt.year.isin(Year))
-        OLD_Hg2_yr = Dataset_OLD.SpeciesConc_Hg2.sel(time=Dataset_OLD.time.dt.year.isin(Year))
-        # NEW simulation        
-        NEW_Hg0_yr = Dataset_NEW.SpeciesConc_Hg0.sel(time=Dataset_NEW.time.dt.year.isin(Year))
-        NEW_Hg2_yr = Dataset_NEW.SpeciesConc_Hg2.sel(time=Dataset_NEW.time.dt.year.isin(Year))
-    else: # use all years
-        # OLD simulation        
-        OLD_Hg0_yr = Dataset_OLD.SpeciesConc_Hg0
-        OLD_Hg2_yr = Dataset_OLD.SpeciesConc_Hg2
-        # NEW simulation                
-        NEW_Hg0_yr = Dataset_NEW.SpeciesConc_Hg0
-        NEW_Hg2_yr = Dataset_NEW.SpeciesConc_Hg2
+    OLD_Hg0_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg0', Year)
+    OLD_Hg2_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg2', Year)
+    NEW_Hg0_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg0', Year)
+    NEW_Hg2_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg2', Year)
    
     # Extract and add together Hg0 and Hg2 at the surface from both 
     # model simulations, multiplying by the unit conversion factor 

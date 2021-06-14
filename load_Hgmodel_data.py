@@ -1,6 +1,6 @@
 import xarray as xr
-def open_Hg_spc (fn_OLD, fn_NEW):
-    """ Open GEOSChem.SpeciesConc.* netcdf files for Hg species as an xarray dataset.
+def open_Hg (fn_OLD, fn_NEW):
+    """ Open GEOSChem.* netcdf files for Hg species as an xarray dataset.
     Can take either list of hourly/monthly/daily files (including *), or a 
     single time-concatenated file for each simulation.
 
@@ -27,3 +27,23 @@ def open_Hg_spc (fn_OLD, fn_NEW):
     
     return ds_OLD, ds_NEW
 
+def ds_sel_yr (ds, varname, Year):
+    """ If a year is given, then subset load for that year. Otherwise load all data into variable
+
+    Parameters
+    ----------
+    ds : xarray dataset
+        Dataset of simulation to extract data from
+    varname : string
+        Name of parameter to extract
+    Year : int
+        Subset of year(s) to analyze model data  
+        
+    """
+    
+    if Year is not None: # take average over subset of years
+        var_yr = ds[varname].sel(time=ds.time.dt.year.isin(Year))
+    else: # use all years
+        var_yr = ds[varname]
+
+    return var_yr

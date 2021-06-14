@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from SiteLevels import levels   
+from load_Hgmodel_data import ds_sel_yr
 
 def PlotSeasonSites(Dataset_OLD, Dataset_NEW, Year = None):
     """ Plot the seasonal cycle of reference and new models against the TGM observations made at each site
@@ -57,21 +58,11 @@ def PlotSeasonSites(Dataset_OLD, Dataset_NEW, Year = None):
         # Load TGM fields from model
 
         # Allow subsetting for years of the simulation, if inputted into the function
-        if Year is not None: # take average over subset of years
-          # OLD simulation        
-          OLD_Hg0_yr = Dataset_OLD.SpeciesConc_Hg0.sel(time=Dataset_OLD.time.dt.year.isin(Year))
-          OLD_Hg2_yr = Dataset_OLD.SpeciesConc_Hg2.sel(time=Dataset_OLD.time.dt.year.isin(Year))
-          # NEW simulation        
-          NEW_Hg0_yr = Dataset_NEW.SpeciesConc_Hg0.sel(time=Dataset_NEW.time.dt.year.isin(Year))
-          NEW_Hg2_yr = Dataset_NEW.SpeciesConc_Hg2.sel(time=Dataset_NEW.time.dt.year.isin(Year))
-        else: # use all years
-          # OLD simulation        
-          OLD_Hg0_yr = Dataset_OLD.SpeciesConc_Hg0
-          OLD_Hg2_yr = Dataset_OLD.SpeciesConc_Hg2
-          # NEW simulation                
-          NEW_Hg0_yr = Dataset_NEW.SpeciesConc_Hg0
-          NEW_Hg2_yr = Dataset_NEW.SpeciesConc_Hg2
-          
+        OLD_Hg0_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg0', Year)
+        OLD_Hg2_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg2', Year)
+        NEW_Hg0_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg0', Year)
+        NEW_Hg2_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg2', Year)
+                  
         # Select level, lat, and longitude where data should be extracted from for both model runs
         OLD_Hg0_site = OLD_Hg0_yr.isel(lev=levels(SiteID)).\
             sel(lat=Lat, lon=Lon, method='nearest').squeeze()

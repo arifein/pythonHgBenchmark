@@ -9,11 +9,12 @@ Main file for running Hg benchmark in python and producing plots
 import os
 os.chdir('/Users/arifeinberg/target2/fs03/d0/arifein/python/pythonHgBenchmark')
 
-from load_Hgmodel_data import open_Hg_spc, open_Hg_wdep
+from load_Hgmodel_data import open_Hg
 from TGMAndObs import SurfaceObsTGM
 from Hg2Plot import SurfaceHg2
 from Latitudinal_Graphs import Seasonal_Lat_Regions, plot_gradient_TGM
 from PlotSeasonSites import PlotSeasonSites
+from wet_deposition import wet_dep_plots
 from matplotlib.backends.backend_pdf import PdfPages
 
 #%% Opening Hg species datasets
@@ -23,7 +24,7 @@ fn_old = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.SpeciesConc
 fn_new = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.SpeciesConc.alltime_m.nc4'
 
 year_to_analyze = 2015 # year to analyze from simulations 
-ds1, ds2 = open_Hg_spc(fn_old, fn_new)
+ds1, ds2 = open_Hg(fn_old, fn_new)
 #%% Plots of surface TGM
 plot1, plot2, plot3 = SurfaceObsTGM(ds1, ds2, year_to_analyze)
 
@@ -38,6 +39,23 @@ plot6 = PlotSeasonSites(ds1, ds2, year_to_analyze)
 
 #%% Plot latitudinal gradient of TGM vs. observations
 plot7 = plot_gradient_TGM(ds1, ds2, year_to_analyze)
+#%% Opening Hg wet deposition datasets
+run_old = '0005' # same as 0003, just with correct outputs
+run_new = '0007'
+
+# large-scale precipitation
+fn_old_LS = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.WetLossLS.alltime_m.nc4'
+fn_new_LS = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.WetLossLS.alltime_m.nc4'
+
+# convective precipitation
+fn_old_CV = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.WetLossConv.alltime_m.nc4'
+fn_new_CV = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.WetLossConv.alltime_m.nc4'
+
+ds1_ls, ds2_ls = open_Hg(fn_old_LS, fn_new_LS) # load large-scale data
+
+ds1_cv, ds2_cv = open_Hg(fn_old_CV, fn_new_CV) # load convective data
+#%% Running wet deposition comparison plots
+wet_dep_plots(ds1_ls, ds1_cv, ds2_ls, ds2_cv)
 
 #%% Save all figures to one PDF file
 pp  = PdfPages(('Figures/benchmark_' + run_old + '_' + run_new + '.pdf'))

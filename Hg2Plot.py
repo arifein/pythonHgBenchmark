@@ -1,6 +1,7 @@
 import xarray as xr
 import numpy as np
 from diff_plots_Hg import diff_plots
+from load_Hgmodel_data import ds_sel_yr
 
 def SurfaceHg2(Old_Dataset, New_Dataset, Year = None):
     """ Plot the mean surface Hg2 + HgP for the reference and new models.
@@ -29,21 +30,11 @@ def SurfaceHg2(Old_Dataset, New_Dataset, Year = None):
     unit_conv = stdpressure / R / stdtemp * MW_Hg * pg_g # converter from vmr to pg m^-3
     
     # Allow subsetting for years, if inputted into the function
-    if Year is not None: # take average over subset of years
-        # OLD simulation        
-        OLD_HgP_yr = Old_Dataset.SpeciesConc_HgP.sel(time=Old_Dataset.time.dt.year.isin(Year))
-        OLD_Hg2_yr = Old_Dataset.SpeciesConc_Hg2.sel(time=Old_Dataset.time.dt.year.isin(Year))
-        # NEW simulation        
-        NEW_HgP_yr = New_Dataset.SpeciesConc_HgP.sel(time=New_Dataset.time.dt.year.isin(Year))
-        NEW_Hg2_yr = New_Dataset.SpeciesConc_Hg2.sel(time=New_Dataset.time.dt.year.isin(Year))
-    else: # use all years
-        # OLD simulation        
-        OLD_HgP_yr = Old_Dataset.SpeciesConc_HgP
-        OLD_Hg2_yr = Old_Dataset.SpeciesConc_Hg2
-        # NEW simulation                
-        NEW_HgP_yr = New_Dataset.SpeciesConc_HgP
-        NEW_Hg2_yr = New_Dataset.SpeciesConc_Hg2
-   
+    OLD_HgP_yr = ds_sel_yr(Old_Dataset, 'SpeciesConc_HgP', Year)
+    OLD_Hg2_yr = ds_sel_yr(Old_Dataset, 'SpeciesConc_Hg2', Year)
+    NEW_HgP_yr = ds_sel_yr(New_Dataset, 'SpeciesConc_HgP', Year)
+    NEW_Hg2_yr = ds_sel_yr(New_Dataset, 'SpeciesConc_Hg2', Year)
+       
     # Extract and add together Hg2 and HgP at the surface from both 
     # model simulations, multiplying by the unit conversion factor
     OLD_HgP = OLD_HgP_yr.isel(lev=0).mean('time')              
