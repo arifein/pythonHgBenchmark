@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from SiteLevels import levels
+from scipy.io import readsav
+import sys
 
 def Seasonal_Lat_Regions(Dataset_OLD, Dataset_NEW, Year = None):
     """Plot observational seasonal cycle against the model for different 
@@ -247,7 +249,14 @@ def plot_gradient_TGM(Dataset_OLD, Dataset_NEW, Year = None):
     # Read in the data for the Land-Based TGM
     AnHgObs= pd.read_csv('data/TGMSiteAnnual.csv',skiprows=[0], na_values=(-9999))
     AnHgObs.columns=['SiteID', 'Lat', 'Lon','Alt', 'TGM', 'Hg0']
-
+    
+    # Read in the cruise data
+    fn_cruise = 'data/tgm_gradient.sav'
+    temme_lat, temme_tgm = load_sav_data(fn_cruise, 'temme')
+    lamborg_lat, lamborg_tgm = load_sav_data(fn_cruise, 'lamborg')
+    laurier_lat, laurier_tgm = load_sav_data(fn_cruise, 'laurier2007')
+    soerenson_lat, soerenson_tgm = load_sav_data(fn_cruise, 'galathea') # Soerenson et al. 2010, ES&T
+    
     # Plot zonal mean of model vs. observations
     Grad_fig = plt.figure(figsize=[8,9])
     
@@ -257,14 +266,71 @@ def plot_gradient_TGM(Dataset_OLD, Dataset_NEW, Year = None):
     
     # Observational sites
     plt.plot(AnHgObs['Lat'], AnHgObs['Hg0'], 'gs')
+    plt.plot(temme_lat, temme_tgm, 'k+')
+    plt.plot(laurier_lat, laurier_tgm, 'kd', mfc="None")
+    plt.plot(lamborg_lat, lamborg_tgm, 'ks', mfc="None")
+    plt.plot(soerenson_lat, soerenson_tgm, 'ko', mfc="None")
     
     # Add a title and axes labels
     plt.title('Surface TGM', fontsize=15)       
     plt.xlabel('Latitude', fontsize=13)       
-    plt.ylabel('TGM (ng/m$^{3}$', fontsize=13)       
+    plt.ylabel('TGM (ng/m$^{3}$)', fontsize=13)       
 
     # Add a legend
-    plt.legend(['Reference Model','New Model', 'Land-based stations'],
+    plt.legend(['Reference Model Zonal Mean','New Model Zonal Mean', 'Land-based stations', 
+                'Temme et al. 2003', 'Laurier et al. 2007', 'Lamborg et al. 1999',
+                'Soerenson et al. 2010'],
                fontsize=13)
     
     return Grad_fig
+
+def load_sav_data(fn, ds_name):
+    """Read .sav files and return the latitudinal gradient of TGM for a specific dataset
+    
+    Parameters
+    ----------
+    fn : str
+        Filename of .sav file with TGM data
+    ds_name : str
+        Dataset to return (Options: "temme", "lamborg", "laurier2007", "galathea") 
+    
+    """
+    possible_ds = ["temme", "lamborg", "laurier2007", "galathea", 
+                   "TEMME", "LAMBORG", "LAURIER2007", "GALATHEA"]
+    if ds_name not in possible_ds:
+        print("Dataset name is not a possible option in .sav file")
+        sys.exit(1)
+    sav_data = readsav(fn,  python_dict=True) # read .sav file that has cruise data
+    ds_data = sav_data['gradient'][ds_name][0]
+    
+    if ds_name.lower() == 'galathea': # different name for TGM
+        ds_data_tgm = ds_data['hg0'][0]
+        ds_data_lat = ds_data['lat'][0]
+        # Lat only has up to size 44, filter ds_data_tgm array up to 44
+        n_lat = len(ds_data_lat)
+        ds_data_tgm = ds_data_tgm[:n_lat]
+    else:
+        ds_data_tgm = ds_data['tgm'][0]
+        ds_data_lat = ds_data['lat'][0]
+        # check where have invalid results for tgm and remove from dataset
+        bool_z = ds_data_tgm!=0 
+        ds_data_tgm = ds_data_tgm[bool_z]
+        ds_data_lat = ds_data_lat[bool_z]
+    
+    # Calculate constant for the unit conversion factor from pptv to  ng/m^3
+    R = 8.314462 # m^3 Pa K^-1 mol ^-1
+    MW_Hg = 200.59 # g mol^-1
+    ng_g = 1e9 # ng/g
+    ppt_vmr = 1e-12 # ppt to vmr
+
+    stdpressure = 101325 # Pascals
+    stdtemp = 273.15 # Kelvins
+
+    unit_conv = stdpressure / R / stdtemp * MW_Hg * ng_g * ppt_vmr # converter from ppt to vmr
+
+    ds_data_tgm = ds_data_tgm * unit_conv # convert to ng/m^3
+
+    return ds_data_lat, ds_data_tgm
+
+
+

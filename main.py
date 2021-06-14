@@ -9,7 +9,7 @@ Main file for running Hg benchmark in python and producing plots
 import os
 os.chdir('/Users/arifeinberg/target2/fs03/d0/arifein/python/pythonHgBenchmark')
 
-from load_Hgmodel_data import open_Hg_spc
+from load_Hgmodel_data import open_Hg_spc, open_Hg_wdep
 from TGMAndObs import SurfaceObsTGM
 from Hg2Plot import SurfaceHg2
 from Latitudinal_Graphs import Seasonal_Lat_Regions, plot_gradient_TGM
