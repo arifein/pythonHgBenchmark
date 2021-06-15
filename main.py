@@ -43,19 +43,16 @@ plot7 = plot_gradient_TGM(ds1, ds2, year_to_analyze)
 run_old = '0005' # same as 0003, just with correct outputs
 run_new = '0007'
 
-# large-scale precipitation
-fn_old_LS = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.WetLossLS.alltime_m.nc4'
-fn_new_LS = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.WetLossLS.alltime_m.nc4'
+# total deposition, summed over all levels (see cdo_shell_scripts/ folder for postprocessing)
+fn_old_wdep = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.WetLossTotal.alltime_m.nc4'
+fn_new_wdep = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.WetLossTotal.alltime_m.nc4'
 
-# convective precipitation
-fn_old_CV = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.WetLossConv.alltime_m.nc4'
-fn_new_CV = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.WetLossConv.alltime_m.nc4'
-
-ds1_ls, ds2_ls = open_Hg(fn_old_LS, fn_new_LS) # load large-scale data
-
-ds1_cv, ds2_cv = open_Hg(fn_old_CV, fn_new_CV) # load convective data
+ds1_wdep, ds2_wdep = open_Hg(fn_old_wdep, fn_new_wdep) # load deposition data
 #%% Running wet deposition comparison plots
-a, b = wet_dep_plots(ds1_ls, ds1_cv, ds2_ls, ds2_cv)
+import time
+start = time.time()
+a, b = wet_dep_plots(ds1_wdep, ds2_wdep, year_to_analyze)
+print('It took', time.time()-start, 'seconds.')
 
 #%% Save all figures to one PDF file
 pp  = PdfPages(('Figures/benchmark_' + run_old + '_' + run_new + '.pdf'))
