@@ -146,9 +146,9 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
                                       'pad':0.04})
      
     # Add text to the plot.
-    plt.text(200,-50,textstr1, fontsize=14)
-    plt.text(200,-75,textstr2, fontsize=14)
-    plt.text(200,-100,textstr4, fontsize=14)
+    plt.text(1.05, 0.1, textstr1, fontsize=13, transform=ax.transAxes)
+    plt.text(1.05, 0.25, textstr2, fontsize=13, transform=ax.transAxes)
+    plt.text(1.05, 0.4, textstr4, fontsize=13, transform=ax.transAxes)
 
     # Add the observed values to the plot.
     plt.scatter(Long, Lati,  transform=ccrs.PlateCarree(),marker='D',
@@ -185,9 +185,9 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
                                       'pad':0.04})
     
     # Add text to the plot.
-    plt.text(200,-50,textstr1, fontsize=14)
-    plt.text(200,-75,textstr3, fontsize=14)
-    plt.text(200,-100,textstr5, fontsize=14)
+    plt.text(1.05, 0.1, textstr1, fontsize=13, transform=ax.transAxes)
+    plt.text(1.05, 0.25, textstr3, fontsize=13, transform=ax.transAxes)
+    plt.text(1.05, 0.4, textstr5, fontsize=13, transform=ax.transAxes)
     
     # Add the observed values to the plot.
     plt.scatter(Long, Lati,  transform=ccrs.PlateCarree(),marker='D',

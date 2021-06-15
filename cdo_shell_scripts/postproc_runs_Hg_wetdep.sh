@@ -2,7 +2,6 @@
 
 # Postprocess simulation data for easy analysis in python
 module load cdo/1.9.10_oel8
-module load nco/4.6.3
 
 # Simulation name
 RUN_NAME=0007
