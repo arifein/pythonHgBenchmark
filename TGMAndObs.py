@@ -138,11 +138,12 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     ax = OLDMAP.add_subplot(111, projection=ccrs.PlateCarree())
     
     # Plot the reference model on the projection.
-    im = TGM_Old.plot.contourf( x='lon',y='lat', ax=ax, levels= Levels, transform=ccrs.PlateCarree(), cmap='viridis', 
+    im = TGM_Old.plot.pcolormesh( x='lon',y='lat', ax=ax, levels= Levels, transform=ccrs.PlateCarree(),
+                                 cmap='viridis', rasterized = True, 
                                  cbar_kwargs={'orientation':'horizontal',
                                            'ticklocation':'auto',
                                       'label':"Not Linear ng m$^{-3}$ ",
-                                      'fraction':0.046,
+                                      'fraction':0.07,
                                       'pad':0.04})
      
     # Add text to the plot.
@@ -164,7 +165,6 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
 
     # Adjust to give text space
     OLDMAP.subplots_adjust(right=0.6, left=0.05)
-    plt.tight_layout()
     
     # Show the plot.
     OLDMAP.show()
@@ -177,11 +177,12 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     ax = NEWMAP.add_subplot(111, projection=ccrs.PlateCarree())
     
     # Plot the new model on the projection.
-    im=TGM_New.plot.contourf(x='lon',y='lat',levels=Levels, ax=ax,transform=ccrs.PlateCarree(), cmap='viridis', 
+    im=TGM_New.plot.pcolormesh(x='lon',y='lat',levels=Levels, ax=ax,transform=ccrs.PlateCarree(),
+                               rasterized = True, cmap='viridis', 
                          cbar_kwargs={'orientation':'horizontal',
                                       'ticklocation':'auto',
                                       'label':"Not Linear ng m$^{-3}$ ",
-                                      'fraction':0.046,
+                                      'fraction':0.07,
                                       'pad':0.04})
     
     # Add text to the plot.
@@ -203,7 +204,6 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     
     # Adjust to give text space
     NEWMAP.subplots_adjust(right=0.6, left=0.05)
-    plt.tight_layout()
     # Show the plot.
     NEWMAP.show()  
     

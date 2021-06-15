@@ -42,7 +42,7 @@ def diff_plots (Var_OLD, Var_NEW, Units="ng/m$^3$", Title="Surface TGM"):
     
     # Plot the reference model and use a geographical map.
     ax = axes[0]
-    im = Var_OLD.plot.contourf(x='lon',y='lat',levels=11, ax=ax, 
+    im = Var_OLD.plot.pcolormesh(x='lon',y='lat',rasterized = True, ax=ax, 
                              vmin=ref_minval, vmax=ref_maxval,
                              transform=ccrs.PlateCarree(), cmap='viridis',                               
                              cbar_kwargs={'orientation':'horizontal',
@@ -58,7 +58,7 @@ def diff_plots (Var_OLD, Var_NEW, Units="ng/m$^3$", Title="Surface TGM"):
     
     # Plot the new model using a geographical map.       
     ax = axes[1]
-    im = Var_NEW.plot.contourf(x='lon',y='lat',levels=11, ax=ax,
+    im = Var_NEW.plot.pcolormesh(x='lon',y='lat',rasterized = True, ax=ax,
                               vmin=ref_minval, vmax=ref_maxval,
                               cmap='viridis', transform=ccrs.PlateCarree(),
                               cbar_kwargs={'orientation':'horizontal',
@@ -72,7 +72,8 @@ def diff_plots (Var_OLD, Var_NEW, Units="ng/m$^3$", Title="Surface TGM"):
     
     # Plot the absolute difference using a geograpical map.
     ax = axes[2]
-    im = Abs_diff.plot.imshow(x='lon',y='lat', ax=ax,transform=ccrs.PlateCarree(),  cmap='RdBu_r',
+    im = Abs_diff.plot.pcolormesh(x='lon',y='lat', ax=ax,transform=ccrs.PlateCarree(), 
+                                  rasterized = True, cmap='RdBu_r',
                              vmin=-Abs_MaxVal, vmax=Abs_MaxVal,
                           cbar_kwargs={'orientation':'horizontal',
                                       'ticklocation':'auto',
@@ -86,7 +87,8 @@ def diff_plots (Var_OLD, Var_NEW, Units="ng/m$^3$", Title="Surface TGM"):
      
     # Plot the percent difference using a geographical map.
     ax = axes[3]
-    im = Perc_diff.plot.imshow(x='lon',y='lat',ax=ax,transform=ccrs.PlateCarree(), cmap='RdBu_r',
+    im = Perc_diff.plot.pcolormesh(x='lon',y='lat',ax=ax,transform=ccrs.PlateCarree(), 
+                                   rasterized = True, cmap='RdBu_r',
                               vmin=(-Perc_MaxVal), vmax=(Perc_MaxVal),
                         cbar_kwargs={'orientation':'horizontal',
                                       'ticklocation':'auto',
