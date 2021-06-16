@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import xarray as xr
 import matplotlib.pyplot as plt
 import numpy as np
@@ -34,11 +35,18 @@ def wet_dep_plots(Dataset_OLD, Dataset_NEW, Year = None):
     # calculate annual average
     OLD_Hg_totwdep = annual_avg(OLD_Hg_totwdep_yr)
     NEW_Hg_totwdep = annual_avg(NEW_Hg_totwdep_yr)
-
+    
     # Plot MDN comparison maps 
     plot1, plot2 = MDN_USA(OLD_Hg_totwdep, NEW_Hg_totwdep, Year)
+
+    # calculate climatology, if have multi-year model runs
+    OLD_Hg_totwdep_clim = OLD_Hg_totwdep_yr.groupby('time.month').mean()
+    NEW_Hg_totwdep_clim = NEW_Hg_totwdep_yr.groupby('time.month').mean()
+
+    # Plot MDN seasonal comparison by latitude 
+    plot3 = MDN_USA_Seasonal(OLD_Hg_totwdep_clim, NEW_Hg_totwdep_clim, Year)
     
-    return plot1, plot2
+    return plot1, plot2, plot3
             
 def MDN_USA(totwetdep_OLD, totwetdep_NEW, Year):
     """Plot the reference and new simulations wet deposition map against observations from the MDN network
@@ -235,3 +243,126 @@ def MDN_USA(totwetdep_OLD, totwetdep_NEW, Year):
     NEWMAP.show()
    
     return OLDMAP, NEWMAP
+
+def MDN_USA_Seasonal(totwetdep_OLD, totwetdep_NEW, Year):
+    
+    """Plot the reference and new simulations wet deposition map against monthly observations from the MDN network
+    
+    Parameters
+    ----------
+    totwetdep_OLD : xarray DataArray
+        Reference Model dataset (wet deposition)
+    totwetdep_NEW : xarray DataArray
+        New Model dataset (wet deposition)
+        
+    """
+    
+    # Convert units from kg/s to ng/m2/d
+    # Load grid cell area for unit conversion of model
+    fn_gbox = 'data/GEOSChem_2x25_gboxarea.nc'
+    ds_gbox = xr.open_dataset(fn_gbox)
+    gbox_GC = ds_gbox.cell_area
+    
+    s_in_d = 24 * 3600 # s in one day
+    kg_ng = 1e12 # kg in ng 
+    
+    unit_conv = s_in_d * kg_ng / gbox_GC
+    
+    totwetdep_OLD = totwetdep_OLD * unit_conv # ng/m^2/d
+    totwetdep_NEW = totwetdep_NEW * unit_conv # ng/m^2/d
+    
+    # Read observations data file
+    MDN_Hg_m = pd.read_csv('data/MDNmonthly.dat',skiprows=[0], na_values=(-9999))
+    MDN_Hg_m.columns=['SiteID', 'Lat', 'Lon', 'Month','Year', 'Hg_Dep_ngm2d']
+    
+    # Only look at Eastern USA
+    min_lon = -92.5
+    max_lon = -72.5
+    
+    # midpoint latitudes to average
+    mid_lat = [30, 34, 38, 42, 46]
+    
+    # initialize mean and standard deviation arrays
+    MDN_Hg_clim = np.zeros((len(mid_lat), 12)) # mean
+    MDN_Hg_clim_sd = np.zeros((len(mid_lat), 12)) # standard deviation
+    n_sites = np.zeros(len(mid_lat), int) # number of sites
+    
+    # take average at same model sites - changed from IDL benchmark
+    OLD_Hg_clim = np.zeros((len(mid_lat), 12)) # mean
+    NEW_Hg_clim = np.zeros((len(mid_lat), 12)) # mean
+    
+    # loop over latitudes, average sites with these criteria
+    for ii, ilat in enumerate(mid_lat):
+        # Check whether within lat/lon criteria
+        lat_bool = abs(MDN_Hg_m['Lat'] - ilat) <=2 # within two lat units
+        lon_bool = (MDN_Hg_m['Lon'] >= min_lon) & (MDN_Hg_m['Lon'] <= max_lon) #within Eastern USA
+        
+        # Filter dataFrame for these criteria
+        MDN_Hg_m_i = MDN_Hg_m.loc[lat_bool & lon_bool, :]
+        
+        # Find lat and lon of each site
+        lon_MDN_i = MDN_Hg_m_i['Lon'][::12].to_numpy()
+        lat_MDN_i = MDN_Hg_m_i['Lat'][::12].to_numpy()
+        
+        # Calculate number of sites
+        n_sites[ii] = int(len(MDN_Hg_m_i)/12)
+        
+        # Calculate monthly mean over lat range
+        MDN_Hg_clim[ii,:] = MDN_Hg_m_i.groupby(['Month'])['Hg_Dep_ngm2d'].mean()
+        MDN_Hg_clim_sd[ii,:] = MDN_Hg_m_i.groupby(['Month'])['Hg_Dep_ngm2d'].std()    
+        
+        # Calculate model values at sites
+        
+        OLD_sites_Hg = np.zeros((n_sites[ii], 12)) # initialize before loop
+        NEW_sites_Hg = np.zeros((n_sites[ii], 12)) # initialize before loop
+
+        # Fill in monthly values at grid cells corresponding to MDN sites
+        for jj in range(n_sites[ii]):            
+            OLD_sites_Hg[jj,:] = totwetdep_OLD.sel(lat=lat_MDN_i[jj], lon=lon_MDN_i[jj], method='nearest')
+            NEW_sites_Hg[jj,:] = totwetdep_NEW.sel(lat=lat_MDN_i[jj], lon=lon_MDN_i[jj], method='nearest')
+        
+        # take modelled average over sites close to the midpoint latitude
+        OLD_Hg_clim[ii, :] = np.mean(OLD_sites_Hg, axis=0)
+        NEW_Hg_clim[ii, :] = np.mean(NEW_sites_Hg, axis=0)
+        
+    
+    # Plot the zonal climatologies from MDN and simulations (at MDN sites)
+
+    plot,  axes = plt.subplots(5, 1, figsize=[8,9],
+                                   gridspec_kw=dict(hspace=0.55, wspace=0.1))
+    axes = axes.flatten()
+    
+    for ii, iax in enumerate(axes):
+        ii_r = len(axes) - ii - 1 # reverse index so go from north to south
+        # Add the data from the observations, the reference model and the new model
+        iax.errorbar(range(12), MDN_Hg_clim[ii_r,:], MDN_Hg_clim_sd[ii_r,:],
+                     color= "k")
+        iax.plot(range(12),OLD_Hg_clim[ii_r, :],color='blue')
+        iax.plot(range(12),NEW_Hg_clim[ii_r, :],color='red')
+    
+    
+        # Label the axes, add a legend and add a title
+        iax.set_ylabel('ng m$^{-2}$ d$^{-1}$')
+        iax.set_title('{0} °N ({1} sites)'.format(mid_lat[ii_r], n_sites[ii_r]), fontsize=12)
+    
+
+        # Set ticks to every month 
+        iax.set_xticks(range(12))
+       
+        # Set tick labels to month names
+        mn = ['J','F','M','A','M','J','J','A','S','O','N','D']            
+        iax.set_xticklabels(mn)
+        
+    # Add overall title to plot
+    plot.subplots_adjust(top=0.92)
+    plot.suptitle('Wet deposition fluxes, Eastern USA',fontweight='bold')
+    
+    # Add legend to plot
+    plot.legend(['MDN 2015', 'Reference Model ' + str(Year),'New Model' + str(Year)])
+                       #loc = 'upper left') # add one legend to figure
+    
+    return plot
+
+    
+
+

@@ -49,7 +49,7 @@ fn_new_wdep = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.WetLos
 
 ds1_wdep, ds2_wdep = open_Hg(fn_old_wdep, fn_new_wdep) # load deposition data
 #%% Running wet deposition comparison plots
-plot8, plot9 = wet_dep_plots(ds1_wdep, ds2_wdep, year_to_analyze)
+plot8, plot9, plot10 = wet_dep_plots(ds1_wdep, ds2_wdep, year_to_analyze)
 
 #%% Save all figures to one PDF file
 pp  = PdfPages(('Figures/benchmark_' + run_old + '_' + run_new + '.pdf'))
