@@ -8,7 +8,6 @@ import cartopy.crs as ccrs
 import cartopy.feature as cf
 from matplotlib import colors
 from scipy import stats
-
 def wet_dep_plots(Dataset_OLD, Dataset_NEW, Year = None):
     """Main script for calling different routines that produce wet deposition map plots
     
@@ -327,39 +326,63 @@ def MDN_USA_Seasonal(totwetdep_OLD, totwetdep_NEW, Year):
         
     
     # Plot the zonal climatologies from MDN and simulations (at MDN sites)
-
-    plot,  axes = plt.subplots(5, 1, figsize=[8,9],
-                                   gridspec_kw=dict(hspace=0.55, wspace=0.1))
-    axes = axes.flatten()
+    plot = plt.figure(figsize=(8, 9))
+    # First add map figure in the background
+    ax = plot.add_axes([0.05, 0, 1, .95], projection=ccrs.PlateCarree())
+    ax.axis('off') # remove axis border
     
-    for ii, iax in enumerate(axes):
-        ii_r = len(axes) - ii - 1 # reverse index so go from north to south
+    # Add in state borders
+    # Create a feature for States/Admin 1 regions at 1:1km from Natural Earth
+    states_provinces = cf.NaturalEarthFeature(
+        category='cultural',
+        name='admin_1_states_provinces_lines',
+        scale='110m',
+        facecolor='none')
+    
+    # Show the coastlines, borders, state borders, and lakes
+ #   ax.coastlines(edgecolor='gray', linewidth=0.1) 
+    ax.add_feature(states_provinces, edgecolor='gray', linewidth=0.2, zorder=5)
+    ax.add_feature(cf.BORDERS,zorder=10, edgecolor='gray', linewidth=0.2)
+    ax.add_feature(cf.LAKES,zorder=11, edgecolor='gray', linewidth=0.2,facecolor='none')
+    ax.add_feature(cf.COASTLINE, edgecolor='gray', linewidth=0.2, zorder=6)
+    
+    # Zoom into Eastern USA area
+    ax.set_xlim([-92.5, -72.5])
+    ax.set_ylim([28, 48])
+    
+    plt.xticks([])
+    plt.yticks([])
+    
+    # Plot inset axes as a loop
+    y_pos = np.linspace(0.05, 0.79, num=len(mid_lat))
+    
+    for ii_r in reversed(range(len(mid_lat))): # reverse index so go from north to south
+        iax = plt.axes([0.08, y_pos[ii_r], 0.9, .13], facecolor='none')
+    
         # Add the data from the observations, the reference model and the new model
         iax.errorbar(range(12), MDN_Hg_clim[ii_r,:], MDN_Hg_clim_sd[ii_r,:],
-                     color= "k")
-        iax.plot(range(12),OLD_Hg_clim[ii_r, :],color='blue')
-        iax.plot(range(12),NEW_Hg_clim[ii_r, :],color='red')
+                     color= "k", label='MDN 2015')
+        iax.plot(range(12),OLD_Hg_clim[ii_r, :],color='blue', label='Reference Model ' + str(Year))
+        iax.plot(range(12),NEW_Hg_clim[ii_r, :],color='red', label='New Model' + str(Year))
     
     
         # Label the axes, add a legend and add a title
         iax.set_ylabel('ng m$^{-2}$ d$^{-1}$')
         iax.set_title('{0} °N ({1} sites)'.format(mid_lat[ii_r], n_sites[ii_r]), fontsize=12)
     
-
+    
         # Set ticks to every month 
         iax.set_xticks(range(12))
        
         # Set tick labels to month names
         mn = ['J','F','M','A','M','J','J','A','S','O','N','D']            
         iax.set_xticklabels(mn)
-        
+        # Add legend to first plot
+        if ii_r==len(mid_lat)-1:
+            iax.legend(loc='upper left')
+            
     # Add overall title to plot
-    plot.subplots_adjust(top=0.92)
     plot.suptitle('Wet deposition fluxes, Eastern USA',fontweight='bold')
-    
-    # Add legend to plot
-    plot.legend(['MDN 2015', 'Reference Model ' + str(Year),'New Model' + str(Year)])
-                       #loc = 'upper left') # add one legend to figure
     
     return plot
 

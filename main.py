@@ -62,5 +62,6 @@ pp.savefig(plot6, bbox_inches = 'tight')
 pp.savefig(plot7, bbox_inches = 'tight')
 pp.savefig(plot8, bbox_inches = 'tight')
 pp.savefig(plot9, bbox_inches = 'tight')
+pp.savefig(plot10, bbox_inches = 'tight')
 
 pp.close()
