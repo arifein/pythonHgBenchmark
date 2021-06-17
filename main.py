@@ -9,7 +9,7 @@ Main file for running Hg benchmark in python and producing plots
 import os
 os.chdir('/Users/arifeinberg/target2/fs03/d0/arifein/python/pythonHgBenchmark')
 
-from load_Hgmodel_data import open_Hg
+from helper_functions import open_Hg
 from TGMAndObs import SurfaceObsTGM
 from Hg2Plot import SurfaceHg2
 from Latitudinal_Graphs import Seasonal_Lat_Regions, plot_gradient_TGM
@@ -41,7 +41,6 @@ plot6 = PlotSeasonSites(ds1, ds2, year_to_analyze)
 plot7 = plot_gradient_TGM(ds1, ds2, year_to_analyze)
 #%% Opening Hg wet deposition datasets
 run_old_2 = '0005' # same as 0003, just with correct outputs
-run_new = '0007'
 
 # total deposition, summed over all levels (see cdo_shell_scripts/ folder for postprocessing)
 fn_old_wdep = '../../GEOS-Chem_runs/run' + run_old_2 + '/OutputDir/GEOSChem.WetLossTotal.alltime_m.nc4'
@@ -49,7 +48,7 @@ fn_new_wdep = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.WetLos
 
 ds1_wdep, ds2_wdep = open_Hg(fn_old_wdep, fn_new_wdep) # load deposition data
 #%% Running wet deposition comparison plots
-plot8, plot9, plot10, plot11, plot12 = wet_dep_plots(ds1_wdep, ds2_wdep, year_to_analyze)
+plot8, plot9, plot10, plot11, plot12, plot13 = wet_dep_plots(ds1_wdep, ds2_wdep, year_to_analyze)
 
 #%% Save all figures to one PDF file
 pp  = PdfPages(('Figures/benchmark_' + run_old + '_' + run_new + '.pdf'))
@@ -65,5 +64,6 @@ pp.savefig(plot9, bbox_inches = 'tight')
 pp.savefig(plot10, bbox_inches = 'tight')
 pp.savefig(plot11, bbox_inches = 'tight')
 pp.savefig(plot12, bbox_inches = 'tight')
+pp.savefig(plot13, bbox_inches = 'tight')
 
 pp.close()

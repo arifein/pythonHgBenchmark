@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from SiteLevels import levels   
-from load_Hgmodel_data import ds_sel_yr
+from helper_functions import ds_sel_yr
 
 def PlotSeasonSites(Dataset_OLD, Dataset_NEW, Year = None):
     """ Plot the seasonal cycle of reference and new models against the TGM observations made at each site

@@ -17,7 +17,7 @@ Summary of scripts and their function:
 
 main.py : Main file for calling functions
 
-load_Hgmodel_data.py : Load Hg datasets from model simulations 
+helper_functions.py : General helper functions for loading and averaging model data 
 
 TGMAndObs.py : Plot the mean surface TGM for mercury against different sites for the reference and new models.
 

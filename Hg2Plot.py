@@ -1,7 +1,7 @@
 import xarray as xr
 import numpy as np
 from diff_plots_Hg import diff_plots
-from load_Hgmodel_data import ds_sel_yr
+from helper_functions import ds_sel_yr
 
 def SurfaceHg2(Old_Dataset, New_Dataset, Year = None):
     """ Plot the mean surface Hg2 + HgP for the reference and new models.

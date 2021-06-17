@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import numpy as np
 import cartopy.crs as ccrs
-#%matplotlib inline
 
 # Define a function for comparing new and old maps of a certain variable
 def diff_plots (Var_OLD, Var_NEW, Units="ng/m$^3$", Title="Surface TGM"):
@@ -27,8 +26,12 @@ def diff_plots (Var_OLD, Var_NEW, Units="ng/m$^3$", Title="Surface TGM"):
     
     # Find the percent difference of the models.  
     Perc_diff = (Abs_diff / Var_OLD)*100
+    
     # Find the absolute maximum value of the percent  difference. 
     Perc_MaxVal= np.max(np.abs(Perc_diff.values))
+    print(Perc_MaxVal)
+    # Set limit to MaxVal as 100%, since can't have negative numbers
+    Perc_MaxVal = min(Perc_MaxVal, 100)
     
     #find maxval and minval for plotting (5th and 99th percentile)
     ref_minval = round_sig(np.percentile(Var_OLD,5))
@@ -86,6 +89,12 @@ def diff_plots (Var_OLD, Var_NEW, Units="ng/m$^3$", Title="Surface TGM"):
     ax.coastlines()
      
     # Plot the percent difference using a geographical map.
+    # Check if max percentage is above 100%, then extend colorbar
+    if Perc_MaxVal==100:
+        bool_max = 'max' # upper extending colorbar
+    else:
+        bool_max = 'neither' # no extending colorbar
+        
     ax = axes[3]
     im = Perc_diff.plot.pcolormesh(x='lon',y='lat',ax=ax,transform=ccrs.PlateCarree(), 
                                    rasterized = True, cmap='RdBu_r',
@@ -94,7 +103,9 @@ def diff_plots (Var_OLD, Var_NEW, Units="ng/m$^3$", Title="Surface TGM"):
                                       'ticklocation':'auto',
                                       'label':"%" ,
                                       'fraction':0.046,
-                                      'pad':0.04})
+                                      'pad':0.04,
+                                      'extend': bool_max})
+                                        
     # Add a title.
     ax.set_title("Percent Difference (%)")
     # Add the coastlines. 

@@ -7,7 +7,7 @@ from scipy import stats
 from SiteLevels import levels
 from diff_plots_Hg import diff_plots
 from matplotlib import colors
-from load_Hgmodel_data import ds_sel_yr
+from helper_functions import ds_sel_yr
 
 def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     """ Plot the mean surface TGM for mercury against different sites for the reference and new models. Also calculate

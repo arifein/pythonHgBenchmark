@@ -3,11 +3,13 @@ import xarray as xr
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from load_Hgmodel_data import ds_sel_yr, annual_avg
+from helper_functions import ds_sel_yr, annual_avg
 import cartopy.crs as ccrs
 import cartopy.feature as cf
 from matplotlib import colors
 from scipy import stats
+from diff_plots_Hg import diff_plots
+
 def wet_dep_plots(Dataset_OLD, Dataset_NEW, Year = None):
     """Main script for calling different routines that produce wet deposition map plots
     
@@ -35,12 +37,26 @@ def wet_dep_plots(Dataset_OLD, Dataset_NEW, Year = None):
     OLD_Hg_totwdep = annual_avg(OLD_Hg_totwdep_yr)
     NEW_Hg_totwdep = annual_avg(NEW_Hg_totwdep_yr)
     
+    # Convert model data from kg/s to ug/m^2/yr for annual average   
+    # Load grid cell area for unit conversion of model
+    fn_gbox = 'data/GEOSChem_2x25_gboxarea.nc'
+    ds_gbox = xr.open_dataset(fn_gbox)
+    gbox_GC = ds_gbox.cell_area
+    
+    s_in_yr = 365.2425 * 24 * 3600 # s in one year
+    kg_ug = 1e9 # kg in ug 
+    
+    unit_conv = s_in_yr * kg_ug / gbox_GC
+    
+    OLD_Hg_totwdep = OLD_Hg_totwdep * unit_conv # ug/m^2/yr
+    NEW_Hg_totwdep = NEW_Hg_totwdep * unit_conv # ug/m^2/yr
+    
     # Plot MDN comparison maps 
     plot1, plot2 = MDN_USA(OLD_Hg_totwdep, NEW_Hg_totwdep, Year)
 
     # calculate climatology, if have multi-year model runs
-    OLD_Hg_totwdep_clim = OLD_Hg_totwdep_yr.groupby('time.month').mean()
-    NEW_Hg_totwdep_clim = NEW_Hg_totwdep_yr.groupby('time.month').mean()
+    OLD_Hg_totwdep_clim = OLD_Hg_totwdep_yr.groupby('time.month').mean() # kg/s
+    NEW_Hg_totwdep_clim = NEW_Hg_totwdep_yr.groupby('time.month').mean() # kg/s
 
     # Plot MDN seasonal comparison by latitude 
     plot3 = MDN_USA_Seasonal(OLD_Hg_totwdep_clim, NEW_Hg_totwdep_clim, Year)
@@ -48,7 +64,12 @@ def wet_dep_plots(Dataset_OLD, Dataset_NEW, Year = None):
     # Plot EMEP comparison maps 
     plot4, plot5 = EMEP_map(OLD_Hg_totwdep, NEW_Hg_totwdep, Year)
     
-    return plot1, plot2, plot3, plot4, plot5
+    # Plot wet deposition difference plot 
+    plot6 = diff_plots(OLD_Hg_totwdep, NEW_Hg_totwdep, 
+                       Units="\u03BCg m$^{-2}$ yr$^{-1}$ ",
+                       Title="Total Wet Dep")
+    
+    return plot1, plot2, plot3, plot4, plot5, plot6
             
 def MDN_USA(totwetdep_OLD, totwetdep_NEW, Year):
     """Plot the reference and new simulations wet deposition map against observations from the MDN network
@@ -74,19 +95,6 @@ def MDN_USA(totwetdep_OLD, totwetdep_NEW, Year):
     
     # unit conversion from ng/m2/yr to ug/m^2/yr
     Value_MDN = Value_MDN * 1e-3
-    # Convert model data from kg/s to ug/m^2/yr    
-    # Load grid cell area for unit conversion of model
-    fn_gbox = 'data/GEOSChem_2x25_gboxarea.nc'
-    ds_gbox = xr.open_dataset(fn_gbox)
-    gbox_GC = ds_gbox.cell_area
-    
-    s_in_yr = 365.2425 * 24 * 3600 # s in one year
-    kg_ug = 1e9 # kg in ug 
-    
-    unit_conv = s_in_yr * kg_ug / gbox_GC
-    
-    totwetdep_OLD = totwetdep_OLD * unit_conv # ug/m^2/yr
-    totwetdep_NEW = totwetdep_NEW * unit_conv # ug/m^2/yr
 
     # Calculate statistics to add to plot
     
@@ -415,20 +423,6 @@ def EMEP_map(totwetdep_OLD, totwetdep_NEW, Year):
     # unit conversion from ng/m2/yr to ug/m^2/yr
     Value_EMEP = Value_EMEP * 1e-3
     
-    # Convert model data from kg/s to ug/m^2/yr    
-    # Load grid cell area for unit conversion of model
-    fn_gbox = 'data/GEOSChem_2x25_gboxarea.nc'
-    ds_gbox = xr.open_dataset(fn_gbox)
-    gbox_GC = ds_gbox.cell_area
-    
-    s_in_yr = 365.2425 * 24 * 3600 # s in one year
-    kg_ug = 1e9 # kg in ug 
-    
-    unit_conv = s_in_yr * kg_ug / gbox_GC
-    
-    totwetdep_OLD = totwetdep_OLD * unit_conv # ug/m^2/yr
-    totwetdep_NEW = totwetdep_NEW * unit_conv # ug/m^2/yr
-
     # Calculate statistics to add to plot
     
     # Round the mean of the observations to 1 decimal places. 

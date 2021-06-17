@@ -5,7 +5,7 @@ import pandas as pd
 from SiteLevels import levels
 from scipy.io import readsav
 import sys
-from load_Hgmodel_data import ds_sel_yr
+from helper_functions import ds_sel_yr
 
 def Seasonal_Lat_Regions(Dataset_OLD, Dataset_NEW, Year = None):
     """Plot observational seasonal cycle against the model for different 
