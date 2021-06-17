@@ -29,7 +29,7 @@ def diff_plots (Var_OLD, Var_NEW, Units="ng/m$^3$", Title="Surface TGM"):
     
     # Find the absolute maximum value of the percent  difference. 
     Perc_MaxVal= np.max(np.abs(Perc_diff.values))
-    print(Perc_MaxVal)
+
     # Set limit to MaxVal as 100%, since can't have negative numbers
     Perc_MaxVal = min(Perc_MaxVal, 100)
     

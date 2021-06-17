@@ -7,7 +7,7 @@ from scipy import stats
 from SiteLevels import levels
 from diff_plots_Hg import diff_plots
 from matplotlib import colors
-from helper_functions import ds_sel_yr
+from helper_functions import ds_sel_yr, annual_avg
 
 def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     """ Plot the mean surface TGM for mercury against different sites for the reference and new models. Also calculate
@@ -51,11 +51,11 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     # Extract and add together Hg0 and Hg2 at the surface from both 
     # model simulations, multiplying by the unit conversion factor 
     # to obtain values for Total Gaseous Mercury.
-    OLD_Hg0 = OLD_Hg0_yr.isel(lev=0).mean('time')                
-    OLD_Hg2 = OLD_Hg2_yr.isel(lev=0).mean('time')
+    OLD_Hg0 = annual_avg(OLD_Hg0_yr.isel(lev=0))              
+    OLD_Hg2 = annual_avg(OLD_Hg2_yr.isel(lev=0))
 
-    NEW_Hg0 = NEW_Hg0_yr.isel(lev=0).mean('time')                
-    NEW_Hg2 = NEW_Hg2_yr.isel(lev=0).mean('time')
+    NEW_Hg0 = annual_avg(NEW_Hg0_yr.isel(lev=0))       
+    NEW_Hg2 = annual_avg(NEW_Hg2_yr.isel(lev=0))
                        
     TGM_Old = (OLD_Hg0 + OLD_Hg2) * unit_conv # TGM is sum of Hg0 and Hg2
     TGM_New = (NEW_Hg0 + NEW_Hg2) * unit_conv # TGM is sum of Hg0 and Hg2
@@ -87,17 +87,17 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
             OLDval[i]= TGM_Old.sel(lat=[Lati[i]], lon=[Long[i]], method='nearest')
             NEWval[i]= TGM_New.sel(lat=[Lati[i]], lon=[Long[i]], method='nearest')
         else: # other level, need to reload TGM
-            OLD_Hg0_lv = OLD_Hg0_yr.isel(lev=lev_site).\
-                sel(lat=[Lati[i]], lon=[Long[i]], method='nearest').mean('time')\
+            OLD_Hg0_lv = annual_avg(OLD_Hg0_yr.isel(lev=lev_site).\
+                sel(lat=[Lati[i]], lon=[Long[i]], method='nearest'))\
                 * unit_conv
-            OLD_Hg2_lv = OLD_Hg2_yr.isel(lev=lev_site).\
-                sel(lat=[Lati[i]], lon=[Long[i]], method='nearest').mean('time')\
+            OLD_Hg2_lv = annual_avg(OLD_Hg2_yr.isel(lev=lev_site).\
+                sel(lat=[Lati[i]], lon=[Long[i]], method='nearest'))\
                 * unit_conv
-            NEW_Hg0_lv = NEW_Hg0_yr.isel(lev=lev_site).\
-                sel(lat=[Lati[i]], lon=[Long[i]], method='nearest').mean('time')\
+            NEW_Hg0_lv = annual_avg(NEW_Hg0_yr.isel(lev=lev_site).\
+                sel(lat=[Lati[i]], lon=[Long[i]], method='nearest'))\
                 * unit_conv
-            NEW_Hg2_lv = NEW_Hg2_yr.isel(lev=lev_site).\
-                sel(lat=[Lati[i]], lon=[Long[i]], method='nearest').mean('time')\
+            NEW_Hg2_lv = annual_avg(NEW_Hg2_yr.isel(lev=lev_site).\
+                sel(lat=[Lati[i]], lon=[Long[i]], method='nearest'))\
                 * unit_conv  
             # Calculate TGM values as sum of Hg0 and Hg2     
             OLDval[i]= OLD_Hg0_lv + OLD_Hg2_lv

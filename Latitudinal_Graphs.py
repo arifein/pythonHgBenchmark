@@ -5,7 +5,7 @@ import pandas as pd
 from SiteLevels import levels
 from scipy.io import readsav
 import sys
-from helper_functions import ds_sel_yr
+from helper_functions import ds_sel_yr, annual_avg
 
 def Seasonal_Lat_Regions(Dataset_OLD, Dataset_NEW, Year = None):
     """Plot observational seasonal cycle against the model for different 
@@ -212,11 +212,11 @@ def plot_gradient_TGM(Dataset_OLD, Dataset_NEW, Year = None):
     # Extract and add together Hg0 and Hg2 at the surface from both 
     # model simulations, multiplying by the unit conversion factor 
     # to obtain values for Total Gaseous Mercury.
-    OLD_Hg0 = OLD_Hg0_yr.isel(lev=0).mean('time')                 
-    OLD_Hg2 = OLD_Hg2_yr.isel(lev=0).mean('time')
+    OLD_Hg0 = annual_avg(OLD_Hg0_yr.isel(lev=0))               
+    OLD_Hg2 = annual_avg(OLD_Hg2_yr.isel(lev=0))
 
-    NEW_Hg0 = NEW_Hg0_yr.isel(lev=0).mean('time')                 
-    NEW_Hg2 = NEW_Hg2_yr.isel(lev=0).mean('time')
+    NEW_Hg0 = annual_avg(NEW_Hg0_yr.isel(lev=0))                 
+    NEW_Hg2 = annual_avg(NEW_Hg2_yr.isel(lev=0))
                        
     TGM_Old = (OLD_Hg0 + OLD_Hg2) * unit_conv # TGM is sum of Hg0 and Hg2
     TGM_New = (NEW_Hg0 + NEW_Hg2) * unit_conv # TGM is sum of Hg0 and Hg2

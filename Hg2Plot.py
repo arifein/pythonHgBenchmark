@@ -1,7 +1,7 @@
 import xarray as xr
 import numpy as np
 from diff_plots_Hg import diff_plots
-from helper_functions import ds_sel_yr
+from helper_functions import ds_sel_yr, annual_avg
 
 def SurfaceHg2(Old_Dataset, New_Dataset, Year = None):
     """ Plot the mean surface Hg2 + HgP for the reference and new models.
@@ -37,11 +37,11 @@ def SurfaceHg2(Old_Dataset, New_Dataset, Year = None):
        
     # Extract and add together Hg2 and HgP at the surface from both 
     # model simulations, multiplying by the unit conversion factor
-    OLD_HgP = OLD_HgP_yr.isel(lev=0).mean('time')              
-    OLD_Hg2 = OLD_Hg2_yr.isel(lev=0).mean('time')
+    OLD_HgP = annual_avg(OLD_HgP_yr.isel(lev=0))            
+    OLD_Hg2 = annual_avg(OLD_Hg2_yr.isel(lev=0))
 
-    NEW_HgP = NEW_HgP_yr.isel(lev=0).mean('time')                
-    NEW_Hg2 = NEW_Hg2_yr.isel(lev=0).mean('time')
+    NEW_HgP = annual_avg(NEW_HgP_yr.isel(lev=0))              
+    NEW_Hg2 = annual_avg(NEW_Hg2_yr.isel(lev=0))
                        
     Hg2_tot_Old = (OLD_HgP + OLD_Hg2) * unit_conv # sum of HgP and Hg2
     Hg2_tot_New = (NEW_HgP + NEW_Hg2) * unit_conv # sum of HgP and Hg2
