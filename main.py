@@ -15,6 +15,7 @@ from Hg2Plot import SurfaceHg2
 from Latitudinal_Graphs import Seasonal_Lat_Regions, plot_gradient_TGM
 from PlotSeasonSites import PlotSeasonSites
 from wet_deposition import wet_dep_plots
+from dry_deposition import dry_dep_plots
 from matplotlib.backends.backend_pdf import PdfPages
 
 #%% Opening Hg species datasets
@@ -49,6 +50,14 @@ fn_new_wdep = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.WetLos
 ds1_wdep, ds2_wdep = open_Hg(fn_old_wdep, fn_new_wdep) # load deposition data
 #%% Running wet deposition comparison plots
 plot8, plot9, plot10, plot11, plot12, plot13 = wet_dep_plots(ds1_wdep, ds2_wdep, year_to_analyze)
+#%% Opening Hg dry deposition datasets
+
+fn_old_ddep = '../../GEOS-Chem_runs/run' + run_old_2 + '/OutputDir/GEOSChem.DryDep.alltime_m.nc4'
+fn_new_ddep = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.DryDep.alltime_m.nc4'
+
+ds1_ddep, ds2_ddep = open_Hg(fn_old_ddep, fn_new_ddep) # load deposition data
+#%% Running dry deposition comparison plots
+plot14, plot15 = dry_dep_plots(ds1_ddep, ds2_ddep, year_to_analyze)
 
 #%% Save all figures to one PDF file
 pp  = PdfPages(('Figures/benchmark_' + run_old + '_' + run_new + '.pdf'))
@@ -65,5 +74,7 @@ pp.savefig(plot10, bbox_inches = 'tight')
 pp.savefig(plot11, bbox_inches = 'tight')
 pp.savefig(plot12, bbox_inches = 'tight')
 pp.savefig(plot13, bbox_inches = 'tight')
+pp.savefig(plot14, bbox_inches = 'tight')
+pp.savefig(plot15, bbox_inches = 'tight')
 
 pp.close()

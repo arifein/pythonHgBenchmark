@@ -30,12 +30,16 @@ def diff_plots (Var_OLD, Var_NEW, Units="ng/m$^3$", Title="Surface TGM"):
     # Find the absolute maximum value of the percent  difference. 
     Perc_MaxVal= np.max(np.abs(Perc_diff.values))
 
+    # If percentage value is nan, set to 100
+    if np.isnan(Perc_MaxVal):
+        Perc_MaxVal = 100
+        
     # Set limit to MaxVal as 100%, since can't have negative numbers
     Perc_MaxVal = min(Perc_MaxVal, 100)
     
     #find maxval and minval for plotting (5th and 99th percentile)
-    ref_minval = round_sig(np.percentile(Var_OLD,5))
-    ref_maxval = round_sig(np.percentile(Var_OLD,99))
+    ref_minval = min(np.percentile(Var_OLD,5), np.percentile(Var_NEW,5))
+    ref_maxval = max(np.percentile(Var_OLD,99), np.percentile(Var_NEW,99))
     
     # Plot the four graphs as subplots.
     TGMGraph,  axes = plt.subplots(2, 2, figsize=[16,12],
@@ -88,12 +92,6 @@ def diff_plots (Var_OLD, Var_NEW, Units="ng/m$^3$", Title="Surface TGM"):
     # Add the coastlines.
     ax.coastlines()
      
-    # Plot the percent difference using a geographical map.
-    # Check if max percentage is above 100%, then extend colorbar
-    if Perc_MaxVal==100:
-        bool_max = 'max' # upper extending colorbar
-    else:
-        bool_max = 'neither' # no extending colorbar
         
     ax = axes[3]
     im = Perc_diff.plot.pcolormesh(x='lon',y='lat',ax=ax,transform=ccrs.PlateCarree(), 
@@ -103,8 +101,7 @@ def diff_plots (Var_OLD, Var_NEW, Units="ng/m$^3$", Title="Surface TGM"):
                                       'ticklocation':'auto',
                                       'label':"%" ,
                                       'fraction':0.046,
-                                      'pad':0.04,
-                                      'extend': bool_max})
+                                      'pad':0.04})
                                         
     # Add a title.
     ax.set_title("Percent Difference (%)")
@@ -116,7 +113,4 @@ def diff_plots (Var_OLD, Var_NEW, Units="ng/m$^3$", Title="Surface TGM"):
 
     # Return the four graphs. 
     return TGMGraph
-    
-def round_sig(x, sig=2):  # round to 2 significant figures
-   return round(x, sig-int(np.floor(np.log10(abs(x))))-1)
 
