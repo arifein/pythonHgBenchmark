@@ -69,7 +69,9 @@ def wet_dep_plots(Dataset_OLD, Dataset_NEW, Year = None):
                        Units="\u03BCg m$^{-2}$ yr$^{-1}$ ",
                        Title="Total Wet Dep")
     
-    return plot1, plot2, plot3, plot4, plot5, plot6
+    plotlist = [plot1, plot2, plot3, plot4, plot5, plot6]
+
+    return plotlist
             
 def MDN_USA(totwetdep_OLD, totwetdep_NEW, Year):
     """Plot the reference and new simulations wet deposition map against observations from the MDN network

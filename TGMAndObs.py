@@ -210,5 +210,6 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     # Create difference plot for TGM at surface 
     diff_MAP = diff_plots(TGM_Old, TGM_New)
     
+    plotlist = [OLDMAP, NEWMAP, diff_MAP]
     # return all plots, for saving in PDF 
-    return OLDMAP, NEWMAP, diff_MAP
+    return plotlist

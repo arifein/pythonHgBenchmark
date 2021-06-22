@@ -80,4 +80,6 @@ def dry_dep_plots(Dataset_OLD, Dataset_NEW, Year = None):
                        Units="\u03BCg m$^{-2}$ yr$^{-1}$ ",
                        Title="Hg(II)+Hg(P) Dry Dep")
     
-    return plot1, plot2
+    plotlist = [plot1, plot2]
+    
+    return plotlist
