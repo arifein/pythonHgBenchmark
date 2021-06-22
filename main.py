@@ -16,6 +16,8 @@ from Latitudinal_Graphs import Seasonal_Lat_Regions, plot_gradient_TGM
 from PlotSeasonSites import PlotSeasonSites
 from wet_deposition import wet_dep_plots
 from dry_deposition import dry_dep_plots
+from Hg_chem_fluxes import chem_plots
+
 from matplotlib.backends.backend_pdf import PdfPages
 
 #%% Opening Hg species datasets
@@ -58,6 +60,14 @@ fn_new_ddep = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.DryDep
 ds1_ddep, ds2_ddep = open_Hg(fn_old_ddep, fn_new_ddep) # load deposition data
 #%% Running dry deposition comparison plots
 plot14, plot15 = dry_dep_plots(ds1_ddep, ds2_ddep, year_to_analyze)
+
+#%% Opening Hg chemistry datasets
+fn_old_chem = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.MercuryChem.alltime_m.nc4'
+fn_new_chem = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.MercuryChem.alltime_m.nc4'
+
+ds1_chem, ds2_chem = open_Hg(fn_old_chem, fn_new_chem) # load deposition data
+#%% Running Hg chemistry plots
+plot16 = chem_plots(ds1_chem, ds2_chem, year_to_analyze)
 
 #%% Save all figures to one PDF file
 pp  = PdfPages(('Figures/benchmark_' + run_old + '_' + run_new + '.pdf'))

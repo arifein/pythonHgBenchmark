@@ -11,10 +11,10 @@ def dry_dep_plots(Dataset_OLD, Dataset_NEW, Year = None):
     Parameters
     ----------
     Dataset_OLD : xarray dataset
-        Reference Model dataset (total wet deposition)
+        Reference Model dataset (dry deposition)
                 
     Dataset_NEW : xarray dataset
-        New Model dataset (total wet deposition)
+        New Model dataset (dry deposition)
             
     Year : int or list of int, optional
         Optional parameter to only select subset of years    
