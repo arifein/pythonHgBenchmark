@@ -3,7 +3,7 @@ import xarray as xr
 import matplotlib.pyplot as plt
 import numpy as np
 from helper_functions import ds_sel_yr, annual_avg
-from diff_plots_Hg import diff_plots
+from diff_plots_Hg import diff_plots, diff_profiles
 
 def chem_plots(Dataset_OLD, Dataset_NEW, Year = None):
     """Main script for calling different routines that produce Hg chemistry plots
@@ -20,7 +20,7 @@ def chem_plots(Dataset_OLD, Dataset_NEW, Year = None):
         Optional parameter to only select subset of years    
     
     """
-    # Sea salt uptake of Hg(II)
+    #---Sea salt uptake of Hg(II)---
     
     # Allow subsetting for years, if inputted into the function
     OLD_Hg2_salt_yr = ds_sel_yr(Dataset_OLD, 'LossHg2bySeaSalt_v', Year) 
@@ -50,4 +50,61 @@ def chem_plots(Dataset_OLD, Dataset_NEW, Year = None):
                        Units="\u03BCg m$^{-2}$ yr$^{-1}$ ",
                        Title="Sea Salt Uptake")
     
-    return plot1
+    #---Zonal Gross Oxidation---
+    
+    # Allow subsetting for years, if inputted into the function
+    OLD_gross_oxid_yr = ds_sel_yr(Dataset_OLD, 'Gross_Hg_Ox', Year) 
+    NEW_gross_oxid_yr = ds_sel_yr(Dataset_NEW, 'Gross_Hg_Ox', Year)
+
+    # calculate annual and zonal average
+    OLD_gross_oxid = annual_avg(OLD_gross_oxid_yr.mean('lon'))
+    NEW_gross_oxid = annual_avg(NEW_gross_oxid_yr.mean('lon'))
+
+    # Convert model data from kg/s to kg/yr for annual average       
+    s_in_yr = 365.2425 * 24 * 3600 # s in one year
+    
+    unit_conv = s_in_yr
+    
+    OLD_gross_oxid = OLD_gross_oxid * unit_conv # kg/yr
+    NEW_gross_oxid = NEW_gross_oxid * unit_conv # kg/yr
+
+    # Plot Hg gross oxidation difference plot 
+    plot2 = diff_profiles(OLD_gross_oxid, NEW_gross_oxid, 
+                       Units="kg yr$^{-1}$ ",
+                       Title="Zonal Gross Oxidation")
+
+    #---Zonal Net Oxidation---
+    
+    # Allow subsetting for years, if inputted into the function
+    OLD_net_oxid_yr = ds_sel_yr(Dataset_OLD, 'ProdHg2fromHg0', Year) 
+    NEW_net_oxid_yr = ds_sel_yr(Dataset_NEW, 'ProdHg2fromHg0', Year)
+
+    # calculate annual and zonal average
+    OLD_net_oxid = annual_avg(OLD_net_oxid_yr.mean('lon'))
+    NEW_net_oxid = annual_avg(NEW_net_oxid_yr.mean('lon'))
+
+    # Convert model data from kg/s to kg/yr for annual average       
+    s_in_yr = 365.2425 * 24 * 3600 # s in one year
+    
+    unit_conv = s_in_yr
+    
+    OLD_net_oxid = OLD_net_oxid * unit_conv # kg/yr
+    NEW_net_oxid = NEW_net_oxid * unit_conv # kg/yr
+
+    # Plot Hg net oxidation difference plot 
+    plot3 = diff_profiles(OLD_net_oxid, NEW_net_oxid, 
+                       Units="kg yr$^{-1}$ ",
+                       Title="Zonal Net Oxidation")
+
+    #---Zonal Gross Reduction---
+    # calculate gross reduction as gross minus net oxidation 
+    OLD_gross_red = OLD_gross_oxid - OLD_net_oxid
+    NEW_gross_red = NEW_gross_oxid - NEW_net_oxid
+    
+    # Plot Hg gross reduction difference plot 
+    plot4 = diff_profiles(OLD_gross_red, NEW_gross_red, 
+                       Units="kg yr$^{-1}$ ",
+                       Title="Zonal Gross Reduction")
+    
+    plotlist = [plot1, plot2, plot3, plot4]
+    return plotlist

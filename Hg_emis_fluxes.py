@@ -56,9 +56,6 @@ def emis_plots(Dataset_OLD, Dataset_NEW, Year = None):
     NEW_Hg2_emis = annual_avg(NEW_Hg2_emis_yr)
     
     # Convert model data from kg/s to kg/yr for annual average       
-    s_in_yr = 365.2425 * 24 * 3600 # s in one year
-    
-    unit_conv = s_in_yr 
             
     OLD_Hg2_emis = OLD_Hg2_emis * unit_conv # kg/yr
     NEW_Hg2_emis = NEW_Hg2_emis * unit_conv # kg/yr
@@ -98,9 +95,6 @@ def emis_plots(Dataset_OLD, Dataset_NEW, Year = None):
     NEW_terr_emis = NEW_geo_emis + NEW_bb_emis + NEW_soil_emis
     
     # Convert model data from kg/s to kg/yr for annual average       
-    s_in_yr = 365.2425 * 24 * 3600 # s in one year
-    
-    unit_conv = s_in_yr 
             
     OLD_terr_emis = OLD_terr_emis * unit_conv # kg/yr
     NEW_terr_emis = NEW_terr_emis * unit_conv # kg/yr
@@ -133,9 +127,6 @@ def emis_plots(Dataset_OLD, Dataset_NEW, Year = None):
     NEW_re_emis = NEW_land_emis + NEW_snow_emis
     
     # Convert model data from kg/s to kg/yr for annual average       
-    s_in_yr = 365.2425 * 24 * 3600 # s in one year
-    
-    unit_conv = s_in_yr 
             
     OLD_re_emis = OLD_re_emis * unit_conv # kg/yr
     NEW_re_emis = NEW_re_emis * unit_conv # kg/yr

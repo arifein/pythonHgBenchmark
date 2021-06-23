@@ -56,9 +56,6 @@ def ocean_plots(Dataset_OLD, Dataset_NEW, Year = None):
     NEW_gross_uptake = annual_avg(NEW_gross_uptake_yr)
     
     # Convert model data from kg/s to kg/yr for annual average       
-    s_in_yr = 365.2425 * 24 * 3600 # s in one year
-    
-    unit_conv = s_in_yr 
             
     OLD_gross_uptake = OLD_gross_uptake * unit_conv # kg/yr
     NEW_gross_uptake = NEW_gross_uptake * unit_conv # kg/yr
