@@ -45,7 +45,7 @@ def chem_plots(Dataset_OLD, Dataset_NEW, Year = None):
     OLD_Hg2_salt = OLD_Hg2_salt * unit_conv # ug/m^2/yr
     NEW_Hg2_salt = NEW_Hg2_salt * unit_conv # ug/m^2/yr
         
-    # Plot Hg0 dry deposition difference plot 
+    # Plot Hg2+ sea salt uptake difference plot 
     plot1 = diff_plots(OLD_Hg2_salt, NEW_Hg2_salt, 
                        Units="\u03BCg m$^{-2}$ yr$^{-1}$ ",
                        Title="Sea Salt Uptake")

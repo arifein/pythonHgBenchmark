@@ -18,6 +18,7 @@ from wet_deposition import wet_dep_plots
 from dry_deposition import dry_dep_plots
 from Hg_chem_fluxes import chem_plots
 from Hg_emis_fluxes import emis_plots
+from Hg_ocean_fluxes import ocean_plots
 
 from matplotlib.backends.backend_pdf import PdfPages
 
@@ -80,6 +81,14 @@ fn_new_emis = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.Mercur
 ds1_emis, ds2_emis = open_Hg(fn_old_emis, fn_new_emis) # load emissions data
 #%% Running Hg emissions plots
 plotlist.extend([emis_plots(ds1_emis, ds2_emis, year_to_analyze)])
+
+#%% Opening Hg ocean datasets
+fn_old_ocean = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.MercuryOcean.alltime_m.nc4'
+fn_new_ocean = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.MercuryOcean.alltime_m.nc4'
+
+ds1_ocean, ds2_ocean = open_Hg(fn_old_ocean, fn_new_ocean) # load ocean data
+#%% Running Hg emissions plots
+plotlist.extend([ocean_plots(ds1_ocean, ds2_ocean, year_to_analyze)])
 
 #%% Flatten the list of plots into one list
 flat_plotlist = []
