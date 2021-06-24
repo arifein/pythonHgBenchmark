@@ -4,7 +4,7 @@
 module load cdo/1.9.10_oel8
 
 # Simulation name
-RUN_NAME=0006
+RUN_NAME=0007
 DIR_NAME=/net/fs03/d0/arifein/GEOS-Chem_runs/run${RUN_NAME}/OutputDir
 
 cd ${DIR_NAME}
@@ -16,8 +16,8 @@ cdo mergetime GEOSChem.MercuryChem.*_0000z.nc4 GEOSChem.MercuryChem.alltime.nc4
 cdo monmean GEOSChem.MercuryChem.alltime.nc4 GEOSChem.MercuryChem.alltime_m.nc4
 
 # sum up individual components of gross oxidation 
-cdo selvar,ProdHg2fromBr,ProdHg2fromBrY,ProdHg2fromClY,ProdHg2fromHgBrPlusBr2,ProdHg2fromHgBrPlusBrBrO,ProdHg2fromHgBrPlusBrClO,ProdHg2fromHgBrPlusBrHO2,ProdHg2fromHgBrPlusBrNO2,ProdHg2fromHgBrPlusBrOH,ProdHg2fromO3,ProdHg2fromOH GEOSChem.MercuryChem.alltime_m.nc4 temp1.nc4
-cdo expr,'Gross_Hg_Ox=ProdHg2fromBr+ProdHg2fromBrY+ProdHg2fromClY+ProdHg2fromHgBrPlusBr2+ProdHg2fromHgBrPlusBrBrO+ProdHg2fromHgBrPlusBrClO+ProdHg2fromHgBrPlusBrHO2+ProdHg2fromHgBrPlusBrNO2+ProdHg2fromHgBrPlusBrOH+ProdHg2fromO3+ProdHg2fromOH' temp1.nc4 temp_gross_ox.nc4 # take sum for gross oxidation
+cdo selvar,ProdHg2fromBr,ProdHg2fromBrY,ProdHg2fromClY,ProdHg2fromO3,ProdHg2fromOH GEOSChem.MercuryChem.alltime_m.nc4 temp1.nc4
+cdo expr,'Gross_Hg_Ox=ProdHg2fromBr+ProdHg2fromBrY+ProdHg2fromClY+ProdHg2fromO3+ProdHg2fromOH' temp1.nc4 temp_gross_ox.nc4 # take sum for gross oxidation
 
 # move gross oxidation variable into GEOSChem.MercuryChem.alltime_m.nc4 file
 ncks -A -v Gross_Hg_Ox temp_gross_ox.nc4 GEOSChem.MercuryChem.alltime_m.nc4

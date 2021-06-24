@@ -1,6 +1,7 @@
 import xarray as xr
 from calendar import monthrange
 import numpy as np
+from math import log10, floor
 
 def open_Hg (fn_OLD, fn_NEW):
     """ Open GEOSChem.* netcdf files for Hg species as an xarray dataset.
@@ -94,3 +95,6 @@ def annual_avg (var_to_avg):
         
         return wgted_mean
     
+def round_sig(x, sig=2):
+    # Rounding one number to specific number of significant digits
+    return round(x, sig-int(floor(log10(abs(x))))-1)
