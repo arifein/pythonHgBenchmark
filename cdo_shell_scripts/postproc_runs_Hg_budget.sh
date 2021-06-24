@@ -40,7 +40,7 @@ cdo selvar,DryDep_HgP,DryDep_Hg2,DryDep_Hg0 GEOSChem.DryDep.alltime_m.nc4 temp7.
 cdo mulc,3.332059800664452e-21 temp7.nc4 temp8.nc4
 
 # weight with grid area and sum to get kg/s globally
-cdo -O -L fldsum -mul temp8.nc4 -gridarea temp8.nc4 temp_drydep.nc4 # issue with this command!!
+cdo -O -L fldsum -mul temp8.nc4 -gridarea temp8.nc4 temp_drydep.nc4 
 #------------------------------------------------------------------
 
 
