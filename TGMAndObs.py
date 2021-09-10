@@ -28,7 +28,9 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     AnHgObs= pd.read_csv('data/TGMSiteAnnual.csv',skiprows=[0], na_values=(-9999))
     AnHgObs.columns=['SiteID', 'Lat', 'Lon','Alt', 'TGM', 'Hg0']
     # Set levels for the colorbar in order to have a nonlinear scale.
-    Levels= (0.75, 0.95, 1.15, 1.35, 1.55, 1.75, 2.30, 2.90, 3.50)
+    Levels = (0, 0.75, 0.95, 1.15, 1.35, 1.55, 1.75, 2.30, 2.90, 3.50, 10)
+
+        
     SiteID=AnHgObs.SiteID
     
     # Make a variable for the unit conversion factor from vmr to  ng/m^3
@@ -60,7 +62,8 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     TGM_Old = (OLD_Hg0 + OLD_Hg2) * unit_conv # TGM is sum of Hg0 and Hg2
     TGM_New = (NEW_Hg0 + NEW_Hg2) * unit_conv # TGM is sum of Hg0 and Hg2
     
-    
+    lon = Old_Dataset.lon
+    lat = Old_Dataset.lat
     
     # Set variable names for the longitude and latitude in the dataset.
     Long=(AnHgObs['Lon'])
@@ -137,15 +140,24 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     # Add a geographical projection on the map.
     ax = OLDMAP.add_subplot(111, projection=ccrs.PlateCarree())
     
+    cmap_v = plt.get_cmap('viridis')
+    colors_v = cmap_v(np.linspace(0, 1, len(Levels) - 1))
+    cmap, norm = colors.from_levels_and_colors(Levels, colors_v)
+
     # Plot the reference model on the projection.
-    im = TGM_Old.plot.pcolormesh( x='lon',y='lat', ax=ax, levels= Levels, transform=ccrs.PlateCarree(),
-                                 cmap='viridis', rasterized = True, 
-                                 cbar_kwargs={'orientation':'horizontal',
-                                           'ticklocation':'auto',
+    im=TGM_Old.plot.pcolormesh(x='lon',y='lat',levels= Levels, ax=ax,transform=ccrs.PlateCarree(),
+                                rasterized = True, cmap=cmap, norm=norm, 
+                          cbar_kwargs={'orientation':'horizontal',
+                                      'ticks':Levels[1:-1],
                                       'label':"Not Linear ng m$^{-3}$ ",
                                       'fraction':0.07,
                                       'pad':0.04})
-     
+   
+    
+    #im = ax.pcolormesh(lon,lat, TGM_Old, cmap=cmap, norm=norm, 
+    #                  rasterized = True)
+    #cbar = OLDMAP.colorbar(im, ticks=Levels, extend='both')
+        
     # Add text to the plot.
     plt.text(1.05, 0.1, textstr1, fontsize=13, transform=ax.transAxes)
     plt.text(1.05, 0.25, textstr2, fontsize=13, transform=ax.transAxes)
@@ -153,9 +165,9 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
 
     # Add the observed values to the plot.
     plt.scatter(Long, Lati,  transform=ccrs.PlateCarree(),marker='D',
-                norm=colors.BoundaryNorm(boundaries=Levels, ncolors=256), 
+                norm=norm, cmap=cmap, 
                 linewidths=0.5, edgecolors='black',
-                label=None, c=Value, cmap='viridis')
+                label=None, c=Value)
 
     # Add a title.
     plt.title(' Reference Model Version: Surface TGM',fontsize=15)   
@@ -175,12 +187,12 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     NEWMAP = plt.figure(figsize=[10,4.5])
     # Add a geographical projection on the map.
     ax = NEWMAP.add_subplot(111, projection=ccrs.PlateCarree())
-    
-    # Plot the new model on the projection.
-    im=TGM_New.plot.pcolormesh(x='lon',y='lat',levels=Levels, ax=ax,transform=ccrs.PlateCarree(),
-                               rasterized = True, cmap='viridis', 
-                         cbar_kwargs={'orientation':'horizontal',
-                                      'ticklocation':'auto',
+   
+    # Plot the reference model on the projection.
+    im=TGM_New.plot.pcolormesh(x='lon',y='lat', ax=ax,transform=ccrs.PlateCarree(),
+                                rasterized = True, cmap=cmap, norm=norm, 
+                          cbar_kwargs={'orientation':'horizontal',
+                                      'ticks':Levels[1:-1],
                                       'label':"Not Linear ng m$^{-3}$ ",
                                       'fraction':0.07,
                                       'pad':0.04})
@@ -192,9 +204,9 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     
     # Add the observed values to the plot.
     plt.scatter(Long, Lati,  transform=ccrs.PlateCarree(),marker='D',
-                norm=colors.BoundaryNorm(boundaries=Levels, ncolors=256), 
-                linewidths=0.75, edgecolors='black',
-                label=None, c=Value, cmap='viridis')
+                norm=norm, cmap=cmap, 
+                linewidths=0.5, edgecolors='black',
+                label=None, c=Value)
 
     # Add a title.
     plt.title(' New Model Version: Surface TGM', fontsize=15)       

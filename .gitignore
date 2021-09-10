@@ -7,3 +7,9 @@ __pycache__/*
 ._.DS_Store
 .*.pdf
 timing_script.py
+Hg_drydep_lifetime.py
+temp*.py
+Figures/benchmark_0003_0006.pdf
+Figures/benchmark_0003_0008.pdf
+Figures/benchmark_0003_0009.pdf
+Figures/benchmark_0003_0013.pdf
