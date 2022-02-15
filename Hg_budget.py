@@ -22,8 +22,9 @@ def budget_calc(Dataset_OLD, Dataset_NEW, Year = None):
     """
     var_names = ["EmisHg0anthro","EmisHg2HgPanthro","EmisHg0geogenic",
                   "EmisHg0soil", "EmisHg0biomass","EmisHg0land","EmisHg0snow",
-                  "FluxHg0fromOceanToAir","DryDep_Hg0","DryDep_Hg2","DryDep_HgP",
-                  "WetLossTot_Hg2","WetLossTot_HgP","FluxHg0fromAirToOcean",
+                  "DryDep_Hg0","DryDep_Hg2","DryDep_HgP",
+                  "WetLossTot_Hg2","WetLossTot_HgP",
+                  "FluxHg0fromAirToOcean","FluxHg0fromOceanToAir",
                   "LossHg2bySeaSalt","Gross_Hg_Ox","ProdHg2fromHg0"]
     
     # Call script to extract global fluxes based on variable names
@@ -57,7 +58,7 @@ def glob_vals(ds1, ds2, vars_to_use, Year = None):
     # Fill dataframe using list
     for ivar in vars_to_use:
         # Allow subsetting for years, if inputted into the function
-        OLD_var_yr = ds_sel_yr(ds1, ivar, 2014) # AF - must change
+        OLD_var_yr = ds_sel_yr(ds1, ivar, Year) 
         NEW_var_yr = ds_sel_yr(ds2, ivar, Year)
         
         # calculate annual average

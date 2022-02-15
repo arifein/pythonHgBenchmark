@@ -23,8 +23,7 @@ def dry_dep_plots(Dataset_OLD, Dataset_NEW, Year = None):
     # Hg0 dry deposition
     
     # Allow subsetting for years, if inputted into the function
-    # temporarily set to 2014 since only have data from this year from my reference run
-    OLD_Hg0_ddep_yr = ds_sel_yr(Dataset_OLD, 'DryDep_Hg0', 2014) # AF - must change
+    OLD_Hg0_ddep_yr = ds_sel_yr(Dataset_OLD, 'DryDep_Hg0', Year)
 
     NEW_Hg0_ddep_yr = ds_sel_yr(Dataset_NEW, 'DryDep_Hg0', Year)
     
@@ -53,9 +52,8 @@ def dry_dep_plots(Dataset_OLD, Dataset_NEW, Year = None):
     # HgII + HgP dry deposition
     
     # Allow subsetting for years, if inputted into the function
-    # temporarily set to 2014 since only have data from this year from my reference run
-    OLD_Hg2_ddep_yr = ds_sel_yr(Dataset_OLD, 'DryDep_Hg2', 2014) # AF - must change
-    OLD_HgP_ddep_yr = ds_sel_yr(Dataset_OLD, 'DryDep_HgP', 2014) # AF - must change
+    OLD_Hg2_ddep_yr = ds_sel_yr(Dataset_OLD, 'DryDep_Hg2', Year)
+    OLD_HgP_ddep_yr = ds_sel_yr(Dataset_OLD, 'DryDep_HgP', Year)
 
     NEW_Hg2_ddep_yr = ds_sel_yr(Dataset_NEW, 'DryDep_Hg2', Year)
     NEW_HgP_ddep_yr = ds_sel_yr(Dataset_NEW, 'DryDep_HgP', Year)

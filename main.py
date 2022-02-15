@@ -6,8 +6,10 @@ Main file for running Hg benchmark in python and producing plots
 @author: arifeinberg
 """
 
-import os
-os.chdir('/Users/arifeinberg/target2/fs03/d0/arifein/python/pythonHgBenchmark')
+# import os
+# os.chdir('/Users/arifeinberg/target2/fs03/d0/arifein/python/pythonHgBenchmark')
+import matplotlib
+matplotlib.use('Agg')
 
 from helper_functions import open_Hg
 from TGMAndObs import SurfaceObsTGM
@@ -26,8 +28,8 @@ from matplotlib.backends.backend_pdf import PdfPages
 # create list of plots to add to
 plotlist = []
 #%% Opening Hg species datasets
-run_old = '0003'
-run_new = '0007'
+run_old = '0005'
+run_new = 'test_Lyssa'
 fn_old = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.SpeciesConc.alltime_m.nc4'
 fn_new = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.SpeciesConc.alltime_m.nc4'
 
@@ -49,10 +51,8 @@ plotlist.extend([PlotSeasonSites(ds1, ds2, year_to_analyze)])
 #%% Plot latitudinal gradient of TGM vs. observations
 plotlist.extend([plot_gradient_TGM(ds1, ds2, year_to_analyze)])
 #%% Opening Hg wet deposition datasets
-run_old_2 = '0005' # same as 0003, just with correct outputs
-
 # total deposition, summed over all levels (see cdo_shell_scripts/ folder for postprocessing)
-fn_old_wdep = '../../GEOS-Chem_runs/run' + run_old_2 + '/OutputDir/GEOSChem.WetLossTotal.alltime_m.nc4'
+fn_old_wdep = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.WetLossTotal.alltime_m.nc4'
 fn_new_wdep = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.WetLossTotal.alltime_m.nc4'
 
 ds1_wdep, ds2_wdep = open_Hg(fn_old_wdep, fn_new_wdep) # load wet deposition data
@@ -60,7 +60,7 @@ ds1_wdep, ds2_wdep = open_Hg(fn_old_wdep, fn_new_wdep) # load wet deposition dat
 plotlist.extend([wet_dep_plots(ds1_wdep, ds2_wdep, year_to_analyze)])
 #%% Opening Hg dry deposition datasets
 
-fn_old_ddep = '../../GEOS-Chem_runs/run' + run_old_2 + '/OutputDir/GEOSChem.DryDep.alltime_m.nc4'
+fn_old_ddep = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.DryDep.alltime_m.nc4'
 fn_new_ddep = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.DryDep.alltime_m.nc4'
 
 ds1_ddep, ds2_ddep = open_Hg(fn_old_ddep, fn_new_ddep) # load dry deposition data
@@ -87,7 +87,7 @@ plotlist.extend([emis_plots(ds1_emis, ds2_emis, year_to_analyze)])
 fn_old_ocean = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.MercuryOcean.alltime_m.nc4'
 fn_new_ocean = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.MercuryOcean.alltime_m.nc4'
 
-ds1_ocean, ds2_ocean = open_Hg(fn_old_ocean, fn_new_ocean) # load ocean data
+#ds1_ocean, ds2_ocean = open_Hg(fn_old_ocean, fn_new_ocean) # load ocean data
 #%% Running Hg emissions plots
 plotlist.extend([ocean_plots(ds1_ocean, ds2_ocean, year_to_analyze)])
 

@@ -99,7 +99,7 @@ def diff_plots (Var_OLD, Var_NEW, Units="ng/m$^3$", Title="Surface TGM"):
                                       'label':"%" ,
                                       'fraction':0.046,
                                       'pad':0.04})
-                                        
+
     # Add a title.
     ax.set_title("Percent Difference (%)")
     # Add the coastlines. 

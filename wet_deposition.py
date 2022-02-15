@@ -27,8 +27,7 @@ def wet_dep_plots(Dataset_OLD, Dataset_NEW, Year = None):
     """
     # Allow subsetting for years, if inputted into the function
     
-    # temporarily set to 2014 since only have data from this year from my reference run
-    OLD_Hg_totwdep_yr = ds_sel_yr(Dataset_OLD, 'WetLossTot_Hg', 2014) # AF - must change
+    OLD_Hg_totwdep_yr = ds_sel_yr(Dataset_OLD, 'WetLossTot_Hg', Year)
 
     NEW_Hg_totwdep_yr = ds_sel_yr(Dataset_NEW, 'WetLossTot_Hg', Year)
     
@@ -50,29 +49,232 @@ def wet_dep_plots(Dataset_OLD, Dataset_NEW, Year = None):
     
     OLD_Hg_totwdep = OLD_Hg_totwdep * unit_conv # ug/m^2/yr
     NEW_Hg_totwdep = NEW_Hg_totwdep * unit_conv # ug/m^2/yr
+
+    # Plot global maps 
+    plot1, plot2 = wdep_global(OLD_Hg_totwdep, NEW_Hg_totwdep, Year)
     
     # Plot MDN comparison maps 
-    plot1, plot2 = MDN_USA(OLD_Hg_totwdep, NEW_Hg_totwdep, Year)
-
+    plot3, plot4 = MDN_USA(OLD_Hg_totwdep, NEW_Hg_totwdep, Year)
+    
     # calculate climatology, if have multi-year model runs
     OLD_Hg_totwdep_clim = OLD_Hg_totwdep_yr.groupby('time.month').mean() # kg/s
     NEW_Hg_totwdep_clim = NEW_Hg_totwdep_yr.groupby('time.month').mean() # kg/s
 
     # Plot MDN seasonal comparison by latitude 
-    plot3 = MDN_USA_Seasonal(OLD_Hg_totwdep_clim, NEW_Hg_totwdep_clim, Year)
+    plot5 = MDN_USA_Seasonal(OLD_Hg_totwdep_clim, NEW_Hg_totwdep_clim, Year)
 
     # Plot EMEP comparison maps 
-    plot4, plot5 = EMEP_map(OLD_Hg_totwdep, NEW_Hg_totwdep, Year)
+    plot6, plot7 = EMEP_map(OLD_Hg_totwdep, NEW_Hg_totwdep, Year)
     
     # Plot wet deposition difference plot 
-    plot6 = diff_plots(OLD_Hg_totwdep, NEW_Hg_totwdep, 
+    plot8 = diff_plots(OLD_Hg_totwdep, NEW_Hg_totwdep, 
                        Units="\u03BCg m$^{-2}$ yr$^{-1}$ ",
                        Title="Total Wet Dep")
     
-    plotlist = [plot1, plot2, plot3, plot4, plot5, plot6]
+    plotlist = [plot1, plot2, plot3, plot4, plot5, plot6, plot7, plot8]
 
     return plotlist
-            
+
+def wdep_global(totwetdep_OLD, totwetdep_NEW, Year):
+    """Plot the reference and new simulations wet deposition map against global observations, compiled in Shah et al. (2021)
+    
+    Parameters
+    ----------
+    totwetdep_OLD : xarray DataArray
+        Reference Model dataset (wet deposition)
+    totwetdep_NEW : xarray DataArray
+        New Model dataset (wet deposition)
+        
+    """
+    #---Read observations data file for NADP (== MDN)--- 
+    NADP_Hg = pd.read_csv('data/NADP_wetdep.csv', na_values=(-9999))
+    NADP_Hg.columns=['SiteID', 'Lat', 'Lon', 'Hg_Dep']
+
+    # Set variable names for the longitude and latitude in the dataset.
+    Lon_NADP = NADP_Hg['Lon']
+    Lat_NADP = NADP_Hg['Lat']
+    
+    # Set a variable name for the observed values of Hg 
+    Value_NADP = NADP_Hg['Hg_Dep']    
+    
+    # unit conversion from ng/m2/yr to ug/m^2/yr
+    Value_NADP = Value_NADP * 1e-3
+    
+    #---Read observations data file for EMEP--- 
+    EMEP_Hg = pd.read_csv('data/EMEP_wetdep.csv', na_values=(-9999))
+    EMEP_Hg.columns=['SiteID', 'Lat', 'Lon', 'Hg_Dep']
+
+    # Set variable names for the longitude and latitude in the dataset.
+    Lon_EMEP = EMEP_Hg['Lon']
+    Lat_EMEP = EMEP_Hg['Lat']
+    
+    # Set a variable name for the observed values of Hg 
+    Value_EMEP = EMEP_Hg['Hg_Dep']    
+    
+    # unit conversion from ng/m2/yr to ug/m^2/yr
+    Value_EMEP = Value_EMEP * 1e-3
+    
+    #---Read observations data file for GMOS--- 
+    GMOS_Hg = pd.read_csv('data/GMOS_wetdep.csv', na_values=(-9999))
+    GMOS_Hg.columns=['SiteID', 'Lat', 'Lon', 'Elevation', 'Hg_Dep']
+
+    # Set variable names for the longitude and latitude in the dataset.
+    Lon_GMOS = GMOS_Hg['Lon']
+    Lat_GMOS = GMOS_Hg['Lat']
+    
+    # Set a variable name for the observed values of Hg 
+    Value_GMOS = GMOS_Hg['Hg_Dep']   
+    
+    #---Read observations data file for Asia--- 
+    Asia_Hg = pd.read_csv('data/Asia_wetdep.csv', na_values=(-9999))
+    Asia_Hg.columns=['SiteID', 'Lat', 'Lon', 'Elevation','Hg_Dep',	'Ref', 'HighElev']
+
+    # Set variable names for the longitude and latitude in the dataset.
+    Lon_Asia = Asia_Hg['Lon']
+    Lat_Asia = Asia_Hg['Lat']
+    
+    # Set a variable name for the observed values of Hg 
+    Value_Asia = Asia_Hg['Hg_Dep']    
+    
+    # Concatenate all data files
+    Value_all = pd.concat([Value_NADP, Value_EMEP, Value_GMOS, Value_Asia], ignore_index=True)
+    Lon_all = pd.concat([Lon_NADP, Lon_EMEP, Lon_GMOS, Lon_Asia], ignore_index=True)
+    Lat_all = pd.concat([Lat_NADP, Lat_EMEP, Lat_GMOS, Lat_Asia], ignore_index=True)
+    
+    # Calculate statistics to add to plot
+    
+    # Round the mean of the observations to 1 decimal places. 
+    MeObsDP=round(np.mean(Value_all),1)
+    
+    # Find the standard deviation of the observed Hg and round this value to 1 decimal places.
+    StdObs= round(np.std(Value_all),1)
+
+    # Create an array of numpy zeros to fill for the reference and new models based on the amount of observed values.
+    OLDval=np.zeros(len(Lat_all))
+    NEWval=np.zeros(len(Lat_all))
+    
+    # Create a for loop to extract values from the models based on the latitude and longitude of the observations.
+    for i in range(len(Lat_all)):
+        OLDval[i]= totwetdep_OLD.sel(lat=[Lat_all[i]], lon=[Lon_all[i]], method='nearest')
+        NEWval[i]= totwetdep_NEW.sel(lat=[Lat_all[i]], lon=[Lon_all[i]], method='nearest')
+    
+    # Find the standard deviation of the values extracted from the reference and new model and round this value 
+    # to 2 decimal places.
+    ErrOLD= round(np.std(OLDval),1)
+    ErrNEW= round(np.std(NEWval),1)
+
+    # Round the means of the values extracted from the reference and new models to decimal places.
+    MeMoOl=round(np.mean(OLDval),1)
+    MeMoNe= round(np.mean(NEWval),1)
+    
+    print('OBS model median wdep: ' + str(round(np.median(Value_all),1)))
+    print('OLD model median wdep: ' + str(round(np.median(OLDval),1)))
+    print('NEW model median wdep: ' + str(round(np.median(NEWval),1)))
+    
+    # Find the correlation coefficient 
+    corrOld, _ = stats.pearsonr(Value_all, OLDval)
+    corrNew, _ = stats.pearsonr(Value_all, NEWval)    
+    # Find the coefficient of determination for the reference and new models
+    CoeffOld= corrOld ** 2
+    CoeffNew= corrNew ** 2
+
+
+    # Create text strings for relevant information: mean, coefficient of determination (rounding to 3DP),
+    textstr1= "Mean Obs. = %s $\pm$ %s \u03BCg m$^{-2}$ yr$^{-1}$ "%(MeObsDP, StdObs)
+    textstr2= "Mean Mod. = %s $\pm$ %s \u03BCg m$^{-2}$ yr$^{-1}$ "%(MeMoOl ,ErrOLD)
+    textstr3= "Mean Mod. = %s $\pm$ %s \u03BCg m$^{-2}$ yr$^{-1}$ "%(MeMoNe ,ErrNEW)
+    textstr4= "$R^2$= %s" %(round(CoeffOld,3))
+    textstr5= "$R^2$= %s" %(round(CoeffNew,3))
+
+    
+    # Add a figure.
+    OLDMAP = plt.figure(figsize=[10,4.5])
+    
+    # Add a geographical projection on the map.
+    ax = OLDMAP.add_subplot(111, projection=ccrs.PlateCarree())
+    
+    # Set color limits as 0, 20
+    norm = colors.Normalize(vmin=0.,vmax=20.0)
+
+    # Plot the reference model on the projection.
+    totwetdep_OLD.plot.pcolormesh(x='lon',y='lat', ax=ax, transform=ccrs.PlateCarree(), 
+                                  norm=norm, cmap='viridis',rasterized = True, zorder=0,
+                                  cbar_kwargs={'orientation':'horizontal',
+                                               'ticklocation':'auto',
+                                               'label':"\u03BCg m$^{-2}$ yr$^{-1}$ ",
+                                               'extend': 'max',
+                                               'fraction':0.046,
+                                               'pad':0.04})
+    # Show the coastlines.
+    ax.coastlines()
+     
+    # Add the observed values to the plot.
+    plt.scatter(Lon_all, Lat_all,  transform=ccrs.PlateCarree(),marker='o',
+                norm=norm,
+                linewidths=0.5, edgecolors='black', 
+                label=None, c=Value_all, cmap='viridis', zorder=15)
+
+    # Add a title.
+    plt.title('Wet Deposition, Reference Model (' + str(Year) + '), obs from Shah21' ,fontsize=15)       
+    
+    # Add text to the plot.
+    plt.text(1.05, 0.1, textstr1, fontsize=13, transform=ax.transAxes)
+    plt.text(1.05, 0.25, textstr2, fontsize=13, transform=ax.transAxes)
+    plt.text(1.05, 0.4, textstr4, fontsize=13, transform=ax.transAxes)
+
+
+    # Adjust to give text space
+    OLDMAP.subplots_adjust(right=0.6, left=0.05)
+    
+    # Show the plot.
+    OLDMAP.show()
+
+    # Add figure for new simulation
+    NEWMAP = plt.figure(figsize=[10,4.5])
+    
+    # Add a geographical projection on the map.
+    ax = NEWMAP.add_subplot(111, projection=ccrs.PlateCarree())
+    
+    # Set color limits as 0, 20
+    norm = colors.Normalize(vmin=0.,vmax=20.0)
+
+    # Plot the reference model on the projection.
+    totwetdep_NEW.plot.pcolormesh( x='lon',y='lat', ax=ax, transform=ccrs.PlateCarree(), 
+                                  norm=norm, cmap='viridis',rasterized = True, zorder=0,
+                                  cbar_kwargs={'orientation':'horizontal',
+                                               'ticklocation':'auto',
+                                               'label':"\u03BCg m$^{-2}$ yr$^{-1}$ ",
+                                               'extend': 'max',
+                                               'fraction':0.046,
+                                               'pad':0.04})
+    # Show the coastlines.
+    ax.coastlines()
+     
+    # Add the observed values to the plot.
+    plt.scatter(Lon_all, Lat_all,  transform=ccrs.PlateCarree(),marker='o',
+                norm=norm,
+                linewidths=0.5, edgecolors='black', 
+                label=None, c=Value_all, cmap='viridis', zorder=15)
+
+    # Add a title.
+    plt.title('Wet Deposition, New Model (' + str(Year) + '),  obs from Shah21' ,fontsize=15)   
+      
+    
+    # Add text to the plot.
+    plt.text(1.05, 0.1, textstr1, fontsize=13, transform=ax.transAxes)
+    plt.text(1.05, 0.25, textstr3, fontsize=13, transform=ax.transAxes)
+    plt.text(1.05, 0.4, textstr5, fontsize=13, transform=ax.transAxes)
+
+
+    # Adjust to give text space
+    NEWMAP.subplots_adjust(right=0.6, left=0.05)
+    
+    # Show the plot.
+    NEWMAP.show()
+   
+    return OLDMAP, NEWMAP
+
+
 def MDN_USA(totwetdep_OLD, totwetdep_NEW, Year):
     """Plot the reference and new simulations wet deposition map against observations from the MDN network
     
