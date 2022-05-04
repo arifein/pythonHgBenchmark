@@ -9,7 +9,7 @@ from diff_plots_Hg import diff_plots
 from matplotlib import colors
 from helper_functions import ds_sel_yr, annual_avg
 
-def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
+def SurfaceObsTGM(Old_Dataset, New_Dataset, Year1 = None, Year2 = None):
     """ Plot the mean surface TGM for mercury against different sites for the reference and new models. Also calculate
     the mean for both models, the mean of the observations and the coefficient of determination. 
     
@@ -20,8 +20,10 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     Dataset_NEW : xarray dataset
         New Model dataset 
     
-    Year : int or list of int, optional
-        Optional parameter to only select subset of years
+    Year1 : int or list of int, optional
+        Optional parameter to only select subset of years for old sim
+    Year2 : int or list of int, optional
+        Optional parameter to only select subset of years for new sim
     
     """    
     # Read in the data for the observed sites
@@ -45,10 +47,10 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year = None):
     unit_conv = stdpressure / R / stdtemp * MW_Hg * ng_g # converter from vmr to ng m^-3
         
     # Allow subsetting for years, if inputted into the function
-    OLD_Hg0_yr = ds_sel_yr(Old_Dataset, 'SpeciesConc_Hg0', Year)
-    OLD_Hg2_yr = ds_sel_yr(Old_Dataset, 'SpeciesConc_Hg2', Year)
-    NEW_Hg0_yr = ds_sel_yr(New_Dataset, 'SpeciesConc_Hg0', Year)
-    NEW_Hg2_yr = ds_sel_yr(New_Dataset, 'SpeciesConc_Hg2', Year)
+    OLD_Hg0_yr = ds_sel_yr(Old_Dataset, 'SpeciesConc_Hg0', Year1)
+    OLD_Hg2_yr = ds_sel_yr(Old_Dataset, 'SpeciesConc_Hg2', Year1)
+    NEW_Hg0_yr = ds_sel_yr(New_Dataset, 'SpeciesConc_Hg0', Year2)
+    NEW_Hg2_yr = ds_sel_yr(New_Dataset, 'SpeciesConc_Hg2', Year2)
    
     # Extract and add together Hg0 and Hg2 at the surface from both 
     # model simulations, multiplying by the unit conversion factor 

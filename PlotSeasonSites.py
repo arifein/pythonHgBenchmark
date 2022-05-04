@@ -6,7 +6,7 @@ import pandas as pd
 from SiteLevels import levels   
 from helper_functions import ds_sel_yr
 
-def PlotSeasonSites(Dataset_OLD, Dataset_NEW, Year = None):
+def PlotSeasonSites(Dataset_OLD, Dataset_NEW, Year1 = None, Year2 = None):
     """ Plot the seasonal cycle of reference and new models against the TGM observations made at each site
     
     Parameters
@@ -16,8 +16,10 @@ def PlotSeasonSites(Dataset_OLD, Dataset_NEW, Year = None):
     Dataset_NEW : xarray dataset
         New Model dataset 
     
-    Year : int or list of int, optional
-        Optional parameter to only select subset of years    
+    Year1 : int or list of int, optional
+        Optional parameter to only select subset of years for old sim
+    Year2 : int or list of int, optional
+        Optional parameter to only select subset of years for new sim
         
     """
     # Import the observed data from the sites     
@@ -58,10 +60,10 @@ def PlotSeasonSites(Dataset_OLD, Dataset_NEW, Year = None):
         # Load TGM fields from model
 
         # Allow subsetting for years of the simulation, if inputted into the function
-        OLD_Hg0_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg0', Year)
-        OLD_Hg2_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg2', Year)
-        NEW_Hg0_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg0', Year)
-        NEW_Hg2_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg2', Year)
+        OLD_Hg0_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg0', Year1)
+        OLD_Hg2_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg2', Year1)
+        NEW_Hg0_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg0', Year2)
+        NEW_Hg2_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg2', Year2)
                   
         # Select level, lat, and longitude where data should be extracted from for both model runs
         OLD_Hg0_site = OLD_Hg0_yr.isel(lev=levels(SiteID)).\

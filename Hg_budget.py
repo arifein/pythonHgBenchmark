@@ -5,7 +5,7 @@ import pandas as pd
 from helper_functions import ds_sel_yr, annual_avg, round_sig
 import matplotlib.pyplot as plt
 
-def budget_calc(Dataset_OLD, Dataset_NEW, Year = None):
+def budget_calc(Dataset_OLD, Dataset_NEW, Year1 = None, Year2 = None):
     """Main script for calling different routines that calculate budget terms for simulations
     
     Parameters
@@ -16,8 +16,10 @@ def budget_calc(Dataset_OLD, Dataset_NEW, Year = None):
     Dataset_NEW : xarray dataset
         New Model dataset (Hg budget)
             
-    Year : int or list of int, optional
-        Optional parameter to only select subset of years    
+    Year1 : int or list of int, optional
+        Optional parameter to only select subset of years for old sim
+    Year2 : int or list of int, optional
+        Optional parameter to only select subset of years for new sim
     
     """
     var_names = ["EmisHg0anthro","EmisHg2HgPanthro","EmisHg0geogenic",
@@ -28,13 +30,13 @@ def budget_calc(Dataset_OLD, Dataset_NEW, Year = None):
                   "LossHg2bySeaSalt","Gross_Hg_Ox","ProdHg2fromHg0"]
     
     # Call script to extract global fluxes based on variable names
-    df_budg = glob_vals(Dataset_OLD, Dataset_NEW, var_names, Year)
+    df_budg = glob_vals(Dataset_OLD, Dataset_NEW, var_names, Year1, Year2)
     
     # Plot fluxes as a pdf
     plot1 = plot_budget(df_budg)
     return plot1
 
-def glob_vals(ds1, ds2, vars_to_use, Year = None):
+def glob_vals(ds1, ds2, vars_to_use, Year1 = None, Year2 = None):
     """Load globally, annually averaged values of desired variables
     
     Parameters
@@ -48,8 +50,10 @@ def glob_vals(ds1, ds2, vars_to_use, Year = None):
     vars_to_use : list of strings
         variables to extract and average from dataset  
             
-    Year : int or list of int, optional
-        Optional parameter to only select subset of years    
+    Year1 : int or list of int, optional
+        Optional parameter to only select subset of years for old sim
+    Year2 : int or list of int, optional
+        Optional parameter to only select subset of years for new sim
     
     """
     # Create pandas dataframe with columns named after variables
@@ -58,8 +62,8 @@ def glob_vals(ds1, ds2, vars_to_use, Year = None):
     # Fill dataframe using list
     for ivar in vars_to_use:
         # Allow subsetting for years, if inputted into the function
-        OLD_var_yr = ds_sel_yr(ds1, ivar, Year) 
-        NEW_var_yr = ds_sel_yr(ds2, ivar, Year)
+        OLD_var_yr = ds_sel_yr(ds1, ivar, Year1) 
+        NEW_var_yr = ds_sel_yr(ds2, ivar, Year2)
         
         # calculate annual average
         OLD_var = annual_avg(OLD_var_yr)

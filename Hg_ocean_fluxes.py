@@ -5,7 +5,7 @@ import numpy as np
 from helper_functions import ds_sel_yr, annual_avg
 from diff_plots_Hg import diff_plots
 
-def ocean_plots(Dataset_OLD, Dataset_NEW, Year = None):
+def ocean_plots(Dataset_OLD, Dataset_NEW, Year1 = None, Year2 = None):
     """Main script for calling different routines that produce Hg ocean plots
     
     Parameters
@@ -16,15 +16,17 @@ def ocean_plots(Dataset_OLD, Dataset_NEW, Year = None):
     Dataset_NEW : xarray dataset
         New Model dataset (Hg ocean fluxes)
             
-    Year : int or list of int, optional
-        Optional parameter to only select subset of years    
+    Year1 : int or list of int, optional
+        Optional parameter to only select subset of years for old sim
+    Year2 : int or list of int, optional
+        Optional parameter to only select subset of years for new sim
     
     """
     #---Gross Ocean Evasion---
     
     # Allow subsetting for years, if inputted into the function
-    OLD_gross_evas_yr = ds_sel_yr(Dataset_OLD, 'FluxHg0fromOceanToAir', Year) 
-    NEW_gross_evas_yr = ds_sel_yr(Dataset_NEW, 'FluxHg0fromOceanToAir', Year)
+    OLD_gross_evas_yr = ds_sel_yr(Dataset_OLD, 'FluxHg0fromOceanToAir', Year1) 
+    NEW_gross_evas_yr = ds_sel_yr(Dataset_NEW, 'FluxHg0fromOceanToAir', Year2)
     
     
     # calculate annual average
@@ -47,8 +49,8 @@ def ocean_plots(Dataset_OLD, Dataset_NEW, Year = None):
     #---Gross Ocean Hg(0) Uptake---
     
     # Allow subsetting for years, if inputted into the function
-    OLD_gross_uptake_yr = ds_sel_yr(Dataset_OLD, 'FluxHg0fromAirToOcean', Year) 
-    NEW_gross_uptake_yr = ds_sel_yr(Dataset_NEW, 'FluxHg0fromAirToOcean', Year)
+    OLD_gross_uptake_yr = ds_sel_yr(Dataset_OLD, 'FluxHg0fromAirToOcean', Year1) 
+    NEW_gross_uptake_yr = ds_sel_yr(Dataset_NEW, 'FluxHg0fromAirToOcean', Year2)
     
     
     # calculate annual average

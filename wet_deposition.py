@@ -10,7 +10,7 @@ from matplotlib import colors
 from scipy import stats
 from diff_plots_Hg import diff_plots
 
-def wet_dep_plots(Dataset_OLD, Dataset_NEW, Year = None):
+def wet_dep_plots(Dataset_OLD, Dataset_NEW, Year1 = None, Year2 = None):
     """Main script for calling different routines that produce wet deposition map plots
     
     Parameters
@@ -21,15 +21,17 @@ def wet_dep_plots(Dataset_OLD, Dataset_NEW, Year = None):
     Dataset_NEW : xarray dataset
         New Model dataset (total wet deposition)
             
-    Year : int or list of int, optional
-        Optional parameter to only select subset of years    
+    Year1 : int or list of int, optional
+        Optional parameter to only select subset of years for old sim
+    Year2 : int or list of int, optional
+        Optional parameter to only select subset of years for new sim
     
     """
     # Allow subsetting for years, if inputted into the function
     
-    OLD_Hg_totwdep_yr = ds_sel_yr(Dataset_OLD, 'WetLossTot_Hg', Year)
+    OLD_Hg_totwdep_yr = ds_sel_yr(Dataset_OLD, 'WetLossTot_Hg', Year1)
 
-    NEW_Hg_totwdep_yr = ds_sel_yr(Dataset_NEW, 'WetLossTot_Hg', Year)
+    NEW_Hg_totwdep_yr = ds_sel_yr(Dataset_NEW, 'WetLossTot_Hg', Year2)
     
     
     # calculate annual average
@@ -51,20 +53,20 @@ def wet_dep_plots(Dataset_OLD, Dataset_NEW, Year = None):
     NEW_Hg_totwdep = NEW_Hg_totwdep * unit_conv # ug/m^2/yr
 
     # Plot global maps 
-    plot1, plot2 = wdep_global(OLD_Hg_totwdep, NEW_Hg_totwdep, Year)
+    plot1, plot2 = wdep_global(OLD_Hg_totwdep, NEW_Hg_totwdep, Year1, Year2)
     
     # Plot MDN comparison maps 
-    plot3, plot4 = MDN_USA(OLD_Hg_totwdep, NEW_Hg_totwdep, Year)
+    plot3, plot4 = MDN_USA(OLD_Hg_totwdep, NEW_Hg_totwdep, Year1, Year2)
     
     # calculate climatology, if have multi-year model runs
     OLD_Hg_totwdep_clim = OLD_Hg_totwdep_yr.groupby('time.month').mean() # kg/s
     NEW_Hg_totwdep_clim = NEW_Hg_totwdep_yr.groupby('time.month').mean() # kg/s
 
     # Plot MDN seasonal comparison by latitude 
-    plot5 = MDN_USA_Seasonal(OLD_Hg_totwdep_clim, NEW_Hg_totwdep_clim, Year)
+    plot5 = MDN_USA_Seasonal(OLD_Hg_totwdep_clim, NEW_Hg_totwdep_clim, Year1, Year2)
 
     # Plot EMEP comparison maps 
-    plot6, plot7 = EMEP_map(OLD_Hg_totwdep, NEW_Hg_totwdep, Year)
+    plot6, plot7 = EMEP_map(OLD_Hg_totwdep, NEW_Hg_totwdep, Year1, Year2)
     
     # Plot wet deposition difference plot 
     plot8 = diff_plots(OLD_Hg_totwdep, NEW_Hg_totwdep, 
@@ -75,7 +77,7 @@ def wet_dep_plots(Dataset_OLD, Dataset_NEW, Year = None):
 
     return plotlist
 
-def wdep_global(totwetdep_OLD, totwetdep_NEW, Year):
+def wdep_global(totwetdep_OLD, totwetdep_NEW, Year1, Year2):
     """Plot the reference and new simulations wet deposition map against global observations, compiled in Shah et al. (2021)
     
     Parameters
@@ -84,6 +86,11 @@ def wdep_global(totwetdep_OLD, totwetdep_NEW, Year):
         Reference Model dataset (wet deposition)
     totwetdep_NEW : xarray DataArray
         New Model dataset (wet deposition)
+        
+    Year1 : int or list of int, optional
+        Optional parameter to only select subset of years for old sim
+    Year2 : int or list of int, optional
+        Optional parameter to only select subset of years for new sim
         
     """
     #---Read observations data file for NADP (== MDN)--- 
@@ -215,7 +222,7 @@ def wdep_global(totwetdep_OLD, totwetdep_NEW, Year):
                 label=None, c=Value_all, cmap='viridis', zorder=15)
 
     # Add a title.
-    plt.title('Wet Deposition, Reference Model (' + str(Year) + '), obs from Shah21' ,fontsize=15)       
+    plt.title('Wet Deposition, Reference Model (' + str(Year1) + '), obs from Shah21' ,fontsize=15)       
     
     # Add text to the plot.
     plt.text(1.05, 0.1, textstr1, fontsize=13, transform=ax.transAxes)
@@ -257,7 +264,7 @@ def wdep_global(totwetdep_OLD, totwetdep_NEW, Year):
                 label=None, c=Value_all, cmap='viridis', zorder=15)
 
     # Add a title.
-    plt.title('Wet Deposition, New Model (' + str(Year) + '),  obs from Shah21' ,fontsize=15)   
+    plt.title('Wet Deposition, New Model (' + str(Year2) + '),  obs from Shah21' ,fontsize=15)   
       
     
     # Add text to the plot.
@@ -275,7 +282,7 @@ def wdep_global(totwetdep_OLD, totwetdep_NEW, Year):
     return OLDMAP, NEWMAP
 
 
-def MDN_USA(totwetdep_OLD, totwetdep_NEW, Year):
+def MDN_USA(totwetdep_OLD, totwetdep_NEW, Year1, Year2):
     """Plot the reference and new simulations wet deposition map against observations from the MDN network
     
     Parameters
@@ -284,6 +291,11 @@ def MDN_USA(totwetdep_OLD, totwetdep_NEW, Year):
         Reference Model dataset (wet deposition)
     totwetdep_NEW : xarray DataArray
         New Model dataset (wet deposition)
+
+    Year1 : int or list of int, optional
+        Optional parameter to only select subset of years for old sim
+    Year2 : int or list of int, optional
+        Optional parameter to only select subset of years for new sim
         
     """
     # Read observations data file
@@ -380,7 +392,7 @@ def MDN_USA(totwetdep_OLD, totwetdep_NEW, Year):
                 label=None, c=Value_MDN, cmap='viridis', zorder=15)
 
     # Add a title.
-    plt.title('Hg Wet Deposition, Reference Model (' + str(Year) + '), MDN (2015)' ,fontsize=15)   
+    plt.title('Hg Wet Deposition, Reference Model (' + str(Year1) + '), MDN (2015)' ,fontsize=15)   
   
     # Zoom into contiguous USA area
     ax.set_xlim([-128, -64])
@@ -437,7 +449,7 @@ def MDN_USA(totwetdep_OLD, totwetdep_NEW, Year):
                 label=None, c=Value_MDN, cmap='viridis', zorder=15)
 
     # Add a title.
-    plt.title('Hg Wet Deposition, New Model (' + str(Year) + '), MDN (2015)' ,fontsize=15)   
+    plt.title('Hg Wet Deposition, New Model (' + str(Year2) + '), MDN (2015)' ,fontsize=15)   
   
     # Zoom into contiguous USA area
     ax.set_xlim([-128, -64])
@@ -458,7 +470,7 @@ def MDN_USA(totwetdep_OLD, totwetdep_NEW, Year):
    
     return OLDMAP, NEWMAP
 
-def MDN_USA_Seasonal(totwetdep_OLD, totwetdep_NEW, Year):
+def MDN_USA_Seasonal(totwetdep_OLD, totwetdep_NEW, Year1, Year2):
     
     """Plot the reference and new simulations wet deposition map against monthly observations from the MDN network
     
@@ -468,6 +480,11 @@ def MDN_USA_Seasonal(totwetdep_OLD, totwetdep_NEW, Year):
         Reference Model dataset (wet deposition)
     totwetdep_NEW : xarray DataArray
         New Model dataset (wet deposition)
+        
+    Year1 : int or list of int, optional
+        Optional parameter to only select subset of years for old sim
+    Year2 : int or list of int, optional
+        Optional parameter to only select subset of years for new sim
         
     """
     
@@ -577,8 +594,8 @@ def MDN_USA_Seasonal(totwetdep_OLD, totwetdep_NEW, Year):
         # Add the data from the observations, the reference model and the new model
         iax.errorbar(range(12), MDN_Hg_clim[ii_r,:], MDN_Hg_clim_sd[ii_r,:],
                      color= "k", label='MDN 2015')
-        iax.plot(range(12),OLD_Hg_clim[ii_r, :],color='blue', label='Reference Model ' + str(Year))
-        iax.plot(range(12),NEW_Hg_clim[ii_r, :],color='red', label='New Model' + str(Year))
+        iax.plot(range(12),OLD_Hg_clim[ii_r, :],color='blue', label='Reference Model ' + str(Year1))
+        iax.plot(range(12),NEW_Hg_clim[ii_r, :],color='red', label='New Model' + str(Year2))
     
     
         # Label the axes, add a legend and add a title
@@ -602,7 +619,7 @@ def MDN_USA_Seasonal(totwetdep_OLD, totwetdep_NEW, Year):
     return plot
 
     
-def EMEP_map(totwetdep_OLD, totwetdep_NEW, Year):
+def EMEP_map(totwetdep_OLD, totwetdep_NEW, Year1, Year2):
     """Plot the reference and new simulations wet deposition map against observations from the MDN network
     
     Parameters
@@ -611,6 +628,11 @@ def EMEP_map(totwetdep_OLD, totwetdep_NEW, Year):
         Reference Model dataset (wet deposition)
     totwetdep_NEW : xarray DataArray
         New Model dataset (wet deposition)
+        
+    Year1 : int or list of int, optional
+        Optional parameter to only select subset of years for old sim
+    Year2 : int or list of int, optional
+        Optional parameter to only select subset of years for new sim
         
     """
     # Read observations data file
@@ -698,7 +720,7 @@ def EMEP_map(totwetdep_OLD, totwetdep_NEW, Year):
                 label=None, c=Value_EMEP, cmap='viridis', zorder=15)
 
     # Add a title.
-    plt.title('Hg Wet Deposition, Reference Model (' + str(Year) + '), EMEP (2013-15)' ,fontsize=15)   
+    plt.title('Hg Wet Deposition, Reference Model (' + str(Year1) + '), EMEP (2013-15)' ,fontsize=15)   
   
     # Zoom into Europe area
     ax.set_xlim([-25, 36])
@@ -746,7 +768,7 @@ def EMEP_map(totwetdep_OLD, totwetdep_NEW, Year):
                 label=None, c=Value_EMEP, cmap='viridis', zorder=15)
 
     # Add a title.
-    plt.title('Hg Wet Deposition, New Model (' + str(Year) + '), EMEP (2013-15)' ,fontsize=15)   
+    plt.title('Hg Wet Deposition, New Model (' + str(Year2) + '), EMEP (2013-15)' ,fontsize=15)   
   
     # Zoom into Europe area
     ax.set_xlim([-25, 36])

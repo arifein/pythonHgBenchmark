@@ -7,7 +7,7 @@ from scipy.io import readsav
 import sys
 from helper_functions import ds_sel_yr, annual_avg
 
-def Seasonal_Lat_Regions(Dataset_OLD, Dataset_NEW, Year = None):
+def Seasonal_Lat_Regions(Dataset_OLD, Dataset_NEW, Year1 = None, Year2 = None):
     """Plot observational seasonal cycle against the model for different 
     latitudes (Southern Mid Latitiude, North Mid Latitude,
     Arctic, Antarctic).
@@ -19,8 +19,10 @@ def Seasonal_Lat_Regions(Dataset_OLD, Dataset_NEW, Year = None):
     Dataset_NEW : xarray dataset
         New Model dataset 
     
-    Year : int or list of int, optional
-        Optional parameter to only select subset of years    
+    Year1 : int or list of int, optional
+        Optional parameter to only select subset of years for old sim
+    Year2 : int or list of int, optional
+        Optional parameter to only select subset of years for new sim
     
     """
 
@@ -45,13 +47,13 @@ def Seasonal_Lat_Regions(Dataset_OLD, Dataset_NEW, Year = None):
     # Calculate mean, std for model and obs in each region
     
     # Arctic
-    Arc_df = filter_sites_region(Arctic, Hgobs, Dataset_OLD, Dataset_NEW, Year)
+    Arc_df = filter_sites_region(Arctic, Hgobs, Dataset_OLD, Dataset_NEW, Year1, Year2)
     # Antarctic                  
-    Ant_df = filter_sites_region(Antarctic, Hgobs, Dataset_OLD, Dataset_NEW, Year)
+    Ant_df = filter_sites_region(Antarctic, Hgobs, Dataset_OLD, Dataset_NEW, Year1, Year2)
     # Northern Mid Latitudes                  
-    NML_df = filter_sites_region(NorthMidLat, Hgobs, Dataset_OLD, Dataset_NEW, Year)
+    NML_df = filter_sites_region(NorthMidLat, Hgobs, Dataset_OLD, Dataset_NEW, Year1, Year2)
     # Southern Mid Latitudes
-    SML_df = filter_sites_region(SouthMidLat, Hgobs, Dataset_OLD, Dataset_NEW, Year)
+    SML_df = filter_sites_region(SouthMidLat, Hgobs, Dataset_OLD, Dataset_NEW, Year1, Year2)
 
     # Create a list of all regions for looped plots
     Regions_df_all = [Arc_df, Ant_df, NML_df, SML_df] 
@@ -89,7 +91,7 @@ def Seasonal_Lat_Regions(Dataset_OLD, Dataset_NEW, Year = None):
     
     return RegPlot
 
-def filter_sites_region(Region, Hgobs, Dataset_OLD, Dataset_NEW, Year = None):
+def filter_sites_region(Region, Hgobs, Dataset_OLD, Dataset_NEW, Year1 = None, Year2 = None):
     """ Calculate the regional seasonal cycle in observations and the two model simulations.
     
     Parameters
@@ -102,6 +104,11 @@ def filter_sites_region(Region, Hgobs, Dataset_OLD, Dataset_NEW, Year = None):
         Reference Model dataset
     Dataset_NEW : xarray dataset
         New Model dataset 
+    Year1 : int or list of int, optional
+        Optional parameter to only select subset of years for old sim
+    Year2 : int or list of int, optional
+        Optional parameter to only select subset of years for new sim
+
     """
 
     # Calculate constant for the unit conversion factor from vmr to  ng/m^3
@@ -132,10 +139,10 @@ def filter_sites_region(Region, Hgobs, Dataset_OLD, Dataset_NEW, Year = None):
     obs_lon = All_region_df.Lon.unique()
     
     # Allow subsetting for years of the simulation, if inputted into the function
-    OLD_Hg0_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg0', Year)
-    OLD_Hg2_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg2', Year)
-    NEW_Hg0_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg0', Year)
-    NEW_Hg2_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg2', Year)
+    OLD_Hg0_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg0', Year1)
+    OLD_Hg2_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg2', Year1)
+    NEW_Hg0_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg0', Year2)
+    NEW_Hg2_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg2', Year2)
     
     # Create datasets for seasonal TGM at each site for the ref and new models     
     for i in range (len(Region)): 
@@ -178,7 +185,7 @@ def filter_sites_region(Region, Hgobs, Dataset_OLD, Dataset_NEW, Year = None):
     
     return Out_df
 
-def plot_gradient_TGM(Dataset_OLD, Dataset_NEW, Year = None):
+def plot_gradient_TGM(Dataset_OLD, Dataset_NEW, Year1 = None, Year2 = None):
     """Plot meridional gradient of TGM at surface from netcdf files of model simulation
     
     Parameters
@@ -188,8 +195,10 @@ def plot_gradient_TGM(Dataset_OLD, Dataset_NEW, Year = None):
     Dataset_NEW : xarray dataset
         New Model dataset 
     
-    Year : int or list of int, optional
-        Optional parameter to only select subset of years        
+    Year1 : int or list of int, optional
+        Optional parameter to only select subset of years for old sim
+    Year2 : int or list of int, optional
+        Optional parameter to only select subset of years for new sim
     """
     # First load surface TGM from model simulations
     # Make a variable for the unit conversion factor from vmr to  ng/m^3
@@ -204,10 +213,10 @@ def plot_gradient_TGM(Dataset_OLD, Dataset_NEW, Year = None):
     unit_conv = stdpressure / R / stdtemp * MW_Hg * ng_g # converter from vmr to ng m^-3
         
     # Allow subsetting for years, if inputted into the function
-    OLD_Hg0_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg0', Year)
-    OLD_Hg2_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg2', Year)
-    NEW_Hg0_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg0', Year)
-    NEW_Hg2_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg2', Year)
+    OLD_Hg0_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg0', Year1)
+    OLD_Hg2_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg2', Year1)
+    NEW_Hg0_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg0', Year2)
+    NEW_Hg2_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg2', Year2)
    
     # Extract and add together Hg0 and Hg2 at the surface from both 
     # model simulations, multiplying by the unit conversion factor 

@@ -5,7 +5,7 @@ import numpy as np
 from helper_functions import ds_sel_yr, annual_avg
 from diff_plots_Hg import diff_plots
 
-def dry_dep_plots(Dataset_OLD, Dataset_NEW, Year = None):
+def dry_dep_plots(Dataset_OLD, Dataset_NEW, Year1 = None, Year2 = None):
     """Main script for calling different routines that produce dry deposition plots
     
     Parameters
@@ -16,16 +16,18 @@ def dry_dep_plots(Dataset_OLD, Dataset_NEW, Year = None):
     Dataset_NEW : xarray dataset
         New Model dataset (dry deposition)
             
-    Year : int or list of int, optional
-        Optional parameter to only select subset of years    
+    Year1 : int or list of int, optional
+        Optional parameter to only select subset of years for old sim
+    Year2 : int or list of int, optional
+        Optional parameter to only select subset of years for new sim
     
     """
     # Hg0 dry deposition
     
     # Allow subsetting for years, if inputted into the function
-    OLD_Hg0_ddep_yr = ds_sel_yr(Dataset_OLD, 'DryDep_Hg0', Year)
+    OLD_Hg0_ddep_yr = ds_sel_yr(Dataset_OLD, 'DryDep_Hg0', Year1)
 
-    NEW_Hg0_ddep_yr = ds_sel_yr(Dataset_NEW, 'DryDep_Hg0', Year)
+    NEW_Hg0_ddep_yr = ds_sel_yr(Dataset_NEW, 'DryDep_Hg0', Year2)
     
     
     # calculate annual average
@@ -52,11 +54,11 @@ def dry_dep_plots(Dataset_OLD, Dataset_NEW, Year = None):
     # HgII + HgP dry deposition
     
     # Allow subsetting for years, if inputted into the function
-    OLD_Hg2_ddep_yr = ds_sel_yr(Dataset_OLD, 'DryDep_Hg2', Year)
-    OLD_HgP_ddep_yr = ds_sel_yr(Dataset_OLD, 'DryDep_HgP', Year)
+    OLD_Hg2_ddep_yr = ds_sel_yr(Dataset_OLD, 'DryDep_Hg2', Year1)
+    OLD_HgP_ddep_yr = ds_sel_yr(Dataset_OLD, 'DryDep_HgP', Year1)
 
-    NEW_Hg2_ddep_yr = ds_sel_yr(Dataset_NEW, 'DryDep_Hg2', Year)
-    NEW_HgP_ddep_yr = ds_sel_yr(Dataset_NEW, 'DryDep_HgP', Year)
+    NEW_Hg2_ddep_yr = ds_sel_yr(Dataset_NEW, 'DryDep_Hg2', Year2)
+    NEW_HgP_ddep_yr = ds_sel_yr(Dataset_NEW, 'DryDep_HgP', Year2)
     
     
     # calculate annual average

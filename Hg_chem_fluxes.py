@@ -5,7 +5,7 @@ import numpy as np
 from helper_functions import ds_sel_yr, annual_avg
 from diff_plots_Hg import diff_plots, diff_profiles
 
-def chem_plots(Dataset_OLD, Dataset_NEW, Year = None):
+def chem_plots(Dataset_OLD, Dataset_NEW, Year1 = None, Year2 = None):
     """Main script for calling different routines that produce Hg chemistry plots
     
     Parameters
@@ -16,15 +16,17 @@ def chem_plots(Dataset_OLD, Dataset_NEW, Year = None):
     Dataset_NEW : xarray dataset
         New Model dataset (Hg chemical fluxes)
             
-    Year : int or list of int, optional
-        Optional parameter to only select subset of years    
+    Year1 : int or list of int, optional
+        Optional parameter to only select subset of years for old sim
+    Year2 : int or list of int, optional
+        Optional parameter to only select subset of years for new sim
     
     """
     #---Sea salt uptake of Hg(II)---
     
     # Allow subsetting for years, if inputted into the function
-    OLD_Hg2_salt_yr = ds_sel_yr(Dataset_OLD, 'LossHg2bySeaSalt_v', Year) 
-    NEW_Hg2_salt_yr = ds_sel_yr(Dataset_NEW, 'LossHg2bySeaSalt_v', Year)
+    OLD_Hg2_salt_yr = ds_sel_yr(Dataset_OLD, 'LossHg2bySeaSalt_v', Year1) 
+    NEW_Hg2_salt_yr = ds_sel_yr(Dataset_NEW, 'LossHg2bySeaSalt_v', Year2)
     
     
     # calculate annual average
@@ -53,8 +55,8 @@ def chem_plots(Dataset_OLD, Dataset_NEW, Year = None):
     #---Zonal Gross Oxidation---
     
     # Allow subsetting for years, if inputted into the function
-    OLD_gross_oxid_yr = ds_sel_yr(Dataset_OLD, 'Gross_Hg_Ox', Year) 
-    NEW_gross_oxid_yr = ds_sel_yr(Dataset_NEW, 'Gross_Hg_Ox', Year)
+    OLD_gross_oxid_yr = ds_sel_yr(Dataset_OLD, 'Gross_Hg_Ox', Year1) 
+    NEW_gross_oxid_yr = ds_sel_yr(Dataset_NEW, 'Gross_Hg_Ox', Year2)
 
     # calculate annual and zonal average
     OLD_gross_oxid = annual_avg(OLD_gross_oxid_yr.mean('lon'))
@@ -76,8 +78,8 @@ def chem_plots(Dataset_OLD, Dataset_NEW, Year = None):
     #---Zonal Net Oxidation---
     
     # Allow subsetting for years, if inputted into the function
-    OLD_net_oxid_yr = ds_sel_yr(Dataset_OLD, 'ProdHg2fromHg0', Year) 
-    NEW_net_oxid_yr = ds_sel_yr(Dataset_NEW, 'ProdHg2fromHg0', Year)
+    OLD_net_oxid_yr = ds_sel_yr(Dataset_OLD, 'ProdHg2fromHg0', Year1) 
+    NEW_net_oxid_yr = ds_sel_yr(Dataset_NEW, 'ProdHg2fromHg0', Year2)
 
     # calculate annual and zonal average
     OLD_net_oxid = annual_avg(OLD_net_oxid_yr.mean('lon'))
