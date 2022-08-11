@@ -137,6 +137,28 @@ def emis_plots(Dataset_OLD, Dataset_NEW, Year1 = None, Year2 = None):
     plot4 = diff_plots(OLD_re_emis, NEW_re_emis, 
                        Units="kg yr$^{-1}$ ",
                        Title="Prompt Re-emission - Land & Snow")
+    
+    #---Re-emission - Ocean---
+    
+    # Allow subsetting for years, if inputted into the function
+    # ocean
+    OLD_oc_emis_yr = ds_sel_yr(Dataset_OLD, 'EmisHg0ocean', Year1) 
+    NEW_oc_emis_yr = ds_sel_yr(Dataset_NEW, 'EmisHg0ocean', Year2)
+    
+    
+    # calculate annual averages
+    OLD_oc_emis = annual_avg(OLD_oc_emis_yr)
+    NEW_oc_emis = annual_avg(NEW_oc_emis_yr)
+    
+    # Convert model data from kg/s to kg/yr for annual average       
+            
+    OLD_oc_emis = OLD_oc_emis * unit_conv # kg/yr
+    NEW_oc_emis = NEW_oc_emis * unit_conv # kg/yr
+        
+    # Plot prompt re-emissions difference plot 
+    plot5 = diff_plots(OLD_oc_emis, NEW_oc_emis, 
+                       Units="kg yr$^{-1}$ ",
+                       Title="Net Ocean Evasion")
 
-    plotlist = [plot1, plot2, plot3, plot4]
+    plotlist = [plot1, plot2, plot3, plot4, plot5]
     return plotlist

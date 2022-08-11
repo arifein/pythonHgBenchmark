@@ -28,13 +28,13 @@ from matplotlib.backends.backend_pdf import PdfPages
 # create list of plots to add to
 plotlist = []
 #%% Opening Hg species datasets
-run_old = '2001'
-run_new = '2001'
+run_old = '0102'
+run_new = '0205'
 fn_old = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.SpeciesConc.alltime_m.nc4'
 fn_new = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.SpeciesConc.alltime_m.nc4'
 
-year_1 = 2005 # year to analyze from old simulation 
-year_2 = 2015 # year to analyze from new simulation 
+year_1 = 2015 # year to analyze from old simulation 
+year_2 = 2014 # year to analyze from new simulation 
 
 ds1, ds2 = open_Hg(fn_old, fn_new)
 #%% Plots of surface TGM
@@ -85,13 +85,13 @@ ds1_emis, ds2_emis = open_Hg(fn_old_emis, fn_new_emis) # load emissions data
 #%% Running Hg emissions plots
 plotlist.extend([emis_plots(ds1_emis, ds2_emis, year_1, year_2)])
 
-#%% Opening Hg ocean datasets
-fn_old_ocean = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.MercuryOcean.alltime_m.nc4'
-fn_new_ocean = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.MercuryOcean.alltime_m.nc4'
+# #%% Opening Hg ocean datasets
+# fn_old_ocean = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.MercuryOcean.alltime_m.nc4'
+# fn_new_ocean = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.MercuryOcean.alltime_m.nc4'
 
-ds1_ocean, ds2_ocean = open_Hg(fn_old_ocean, fn_new_ocean) # load ocean data
-#%% Running Hg emissions plots
-plotlist.extend([ocean_plots(ds1_ocean, ds2_ocean, year_1, year_2)])
+# ds1_ocean, ds2_ocean = open_Hg(fn_old_ocean, fn_new_ocean) # load ocean data
+# #%% Running Hg oceans plots
+# plotlist.extend([ocean_plots(ds1_ocean, ds2_ocean, year_1, year_2)])
 
 #%% Opening Hg budget datasets
 fn_old_budget = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.MercuryBudget_global_m.nc4'

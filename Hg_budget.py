@@ -23,12 +23,14 @@ def budget_calc(Dataset_OLD, Dataset_NEW, Year1 = None, Year2 = None):
     
     """
     var_names = ["EmisHg0anthro","EmisHg2HgPanthro","EmisHg0geogenic",
-                  "EmisHg0soil", "EmisHg0biomass","EmisHg0land","EmisHg0snow",
-                  "DryDep_Hg0","DryDep_Hg2","DryDep_HgP",
-                  "WetLossTot_Hg2","WetLossTot_HgP",
-                  "FluxHg0fromAirToOcean","FluxHg0fromOceanToAir",
-                  "LossHg2bySeaSalt","Gross_Hg_Ox","ProdHg2fromHg0"]
+                 "EmisHg0soil", "EmisHg0biomass","EmisHg0land","EmisHg0snow",
+                 "EmisHg0ocean","DryDep_Hg0","DryDep_Hg2","DryDep_HgP",
+                 "WetLossTot_Hg2","WetLossTot_HgP",
+                 "LossHg2bySeaSalt","Gross_Hg_Ox","ProdHg2fromHg0"]
+#    var_names = ["FluxHg0fromAirToOcean","FluxHg0fromOceanToAir",
+#                   "EmisHg0ocean"]#,"Gross_Hg_Ox","ProdHg2fromHg0"]
     
+   
     # Call script to extract global fluxes based on variable names
     df_budg = glob_vals(Dataset_OLD, Dataset_NEW, var_names, Year1, Year2)
     
