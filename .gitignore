@@ -9,7 +9,5 @@ __pycache__/*
 timing_script.py
 Hg_drydep_lifetime.py
 temp*.py
-Figures/benchmark_*.pdf
-Figures/Hg0_*.pdf
-Figures/Fig3_*.pdf
+Figures/*.pdf
 data/._*
