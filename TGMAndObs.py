@@ -145,7 +145,6 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year1 = None, Year2 = None):
     cmap_v = plt.get_cmap('viridis')
     colors_v = cmap_v(np.linspace(0, 1, len(Levels) - 1))
     cmap, norm = colors.from_levels_and_colors(Levels, colors_v)
-
     # Plot the reference model on the projection.
     im=TGM_Old.plot.pcolormesh(x='lon',y='lat',levels= Levels, ax=ax,transform=ccrs.PlateCarree(),
                                 rasterized = True, cmap=cmap, norm=norm, 
@@ -191,7 +190,7 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year1 = None, Year2 = None):
     ax = NEWMAP.add_subplot(111, projection=ccrs.PlateCarree())
    
     # Plot the reference model on the projection.
-    im=TGM_New.plot.pcolormesh(x='lon',y='lat', ax=ax,transform=ccrs.PlateCarree(),
+    im=TGM_New.plot.pcolormesh(x='lon',y='lat', levels= Levels, ax=ax,transform=ccrs.PlateCarree(),
                                 rasterized = True, cmap=cmap, norm=norm, 
                           cbar_kwargs={'orientation':'horizontal',
                                       'ticks':Levels[1:-1],

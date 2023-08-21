@@ -28,15 +28,16 @@ from matplotlib.backends.backend_pdf import PdfPages
 # create list of plots to add to
 plotlist = []
 #%% Opening Hg species datasets
-run_old = '0102'
-run_new = '0205'
+run_old = '2000'
+run_new = '2010'
 fn_old = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.SpeciesConc.alltime_m.nc4'
 fn_new = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.SpeciesConc.alltime_m.nc4'
 
-year_1 = 2015 # year to analyze from old simulation 
-year_2 = 2014 # year to analyze from new simulation 
+year_1 = 2005 # year to analyze from old simulation 
+year_2 = 2005 # year to analyze from new simulation 
 
 ds1, ds2 = open_Hg(fn_old, fn_new)
+
 #%% Plots of surface TGM
 # add output plots to list of plots
 plotlist.extend([SurfaceObsTGM(ds1, ds2, year_1, year_2)])

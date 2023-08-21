@@ -2,6 +2,7 @@ import xarray as xr
 from calendar import monthrange
 import numpy as np
 from math import log10, floor
+import sys
 
 def open_Hg (fn_OLD, fn_NEW):
     """ Open GEOSChem.* netcdf files for Hg species as an xarray dataset.
@@ -53,7 +54,7 @@ def ds_sel_yr (ds, varname, Year):
     return var_yr
 
 def annual_avg (var_to_avg):
-    """ Take annual average from monthly data, accounting for the difference in day number
+    """ Take annual average from monthly data for multi-year data, accounting for the difference in day number
     Parameters
     ----------
     var_to_avg : xarray dataArray
@@ -71,29 +72,19 @@ def annual_avg (var_to_avg):
         print("Simulation needs to be in monthly-averaged time resolution. This data is sub-monthly resolution")
         sys.exit(1)
     else:
-        n_time = len(time_v) # number of timesteps
-        days_in_month = np.zeros(n_time)
-        for i in range(n_time):
-            # return number of days in month, accounting for leap year
-            days_in_month[i] = monthrange(int(time_v.dt.year[i]),int(time_v.dt.month[i]))[1] 
+        # calculate number of days per month
+        days_in_month = time_v.dt.days_in_month
         
-        #for weighted average, need this variable as an xarray
-        days_in_month_xr = xr.DataArray(
-            data=days_in_month,
-            dims=["time"],
-            coords=dict(
-                time=time_v
-                ),
-            attrs=dict(
-                description="Days in month of simulation",
-                ),
-            )
-        # adding weights to time dimension    
-        wgted_var = var_to_avg.weighted(days_in_month_xr)
-        # taking mean weighted by month length
-        wgted_mean = wgted_var.mean("time")
+        wgts = days_in_month.groupby("time.year") / days_in_month.groupby("time.year").sum()
         
-        return wgted_mean
+        # Calculate the numerator for weighted average
+        obs_sum = (var_to_avg * wgts).resample(time="AS").sum(dim="time").squeeze()
+        
+        # Calculate the denominator for weighted average
+        ones_out = (wgts).resample(time="AS").sum(dim="time").squeeze()
+        
+        # Return the weighted average
+        return obs_sum / ones_out
     
 def round_sig(x, sig=2):
     # Rounding one number to specific number of significant digits
