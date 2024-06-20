@@ -3,15 +3,14 @@ def levels(SiteID):
 	Arg: 
 	SiteID (str) : The Site ID you input to retrieve the levels.
     
+    A.F. now adapted for WACCM 70 L
     
     """
     level = {
-    'ZEP': 3,
-    'AND': 2,
-    'MWA': 1,
-    'MLO': 18,
-    'MBO': 16,
-    'NamCo': 18,
-    'LLN':16,
+    'ZEP': 2,
+    'AND': 1,
+    'MWA': 3,
+    'MLO': 9,
+    'LLN':8,
         }
     return level.get(SiteID.upper(), 0)

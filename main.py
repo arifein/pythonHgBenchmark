@@ -27,14 +27,19 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 # create list of plots to add to
 plotlist = []
-#%% Opening Hg species datasets
-run_old = '2000'
-run_new = '2010'
-fn_old = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.SpeciesConc.alltime_m.nc4'
-fn_new = '../../GEOS-Chem_runs/run' + run_new + '/OutputDir/GEOSChem.SpeciesConc.alltime_m.nc4'
 
-year_1 = 2005 # year to analyze from old simulation 
-year_2 = 2005 # year to analyze from new simulation 
+#%% Opening Hg species datasets
+run_old = 'Testing_HG_full'
+run_new = 'Testing_HG_full' # for now leave as the same
+
+dir_old = '/glade/derecho/scratch/afeinberg/Setup_Derecho/CESM2-SLH_Madrid24/Testing_CESM2-SLH/archive/FW.f19_f19_mg17.L70.cesm2.2-asdbranch_vsl03_CSIC_Hg_v2.' + run_old + '.FWnudged_slh/atm/hist/'
+fn_old = dir_old + 'FW.f19_f19_mg17.L70.cesm2.2-asdbranch_vsl03_CSIC_Hg_v2.' + run_old + '.FWnudged_slh.SpeciesConc_alltime_m.nc'
+
+dir_new = '/glade/derecho/scratch/afeinberg/Setup_Derecho/CESM2-SLH_Madrid24/Testing_CESM2-SLH/archive/FW.f19_f19_mg17.L70.cesm2.2-asdbranch_vsl03_CSIC_Hg_v2.' + run_old + '.FWnudged_slh/atm/hist/'
+fn_new = dir_new + 'FW.f19_f19_mg17.L70.cesm2.2-asdbranch_vsl03_CSIC_Hg_v2.' + run_old + '.FWnudged_slh.SpeciesConc_alltime_m.nc'
+
+year_1 = 2013 # year to analyze from old simulation 
+year_2 = 2013 # year to analyze from new simulation 
 
 ds1, ds2 = open_Hg(fn_old, fn_new)
 
@@ -53,6 +58,28 @@ plotlist.extend([PlotSeasonSites(ds1, ds2, year_1, year_2)])
 
 #%% Plot latitudinal gradient of TGM vs. observations
 plotlist.extend([plot_gradient_TGM(ds1, ds2, year_1, year_2)])
+
+#%% Flatten the list of plots into one list
+flat_plotlist = []
+for sublist in plotlist:
+    if isinstance(sublist, list): 
+        for item in sublist:
+            flat_plotlist.append(item)
+    else: # can't iterate over Figures
+        flat_plotlist.append(sublist)
+#%% Save all figures to one PDF file
+if year_1 != year_2: # use different years for simulation
+    fn_fig = 'Figures/benchmark_' + run_old + '_' + run_new + '_' + str(year_1) + '-' + str(year_2) + '.pdf'
+else:
+    fn_fig = 'Figures/benchmark_' + run_old + '_' + run_new + '.pdf'
+pp  = PdfPages((fn_fig))
+
+# Add all plots to PDF as a loop
+for iplot in flat_plotlist:
+    pp.savefig(iplot, bbox_inches = 'tight')
+    
+pp.close()
+exit()
 #%% Opening Hg wet deposition datasets
 # total deposition, summed over all levels (see cdo_shell_scripts/ folder for postprocessing)
 fn_old_wdep = '../../GEOS-Chem_runs/run' + run_old + '/OutputDir/GEOSChem.WetLossTotal.alltime_m.nc4'
@@ -102,23 +129,3 @@ ds1_budget, ds2_budget = open_Hg(fn_old_budget, fn_new_budget) # load ocean data
 #%% Running Hg budget calc
 plotlist.extend([budget_calc(ds1_budget, ds2_budget, year_1, year_2)])
 
-#%% Flatten the list of plots into one list
-flat_plotlist = []
-for sublist in plotlist:
-    if isinstance(sublist, list): 
-        for item in sublist:
-            flat_plotlist.append(item)
-    else: # can't iterate over Figures
-        flat_plotlist.append(sublist)
-#%% Save all figures to one PDF file
-if year_1 != year_2: # use different years for simulation
-    fn_fig = 'Figures/benchmark_' + run_old + '_' + run_new + '_' + str(year_1) + '-' + str(year_2) + '.pdf'
-else:
-    fn_fig = 'Figures/benchmark_' + run_old + '_' + run_new + '.pdf'
-pp  = PdfPages((fn_fig))
-
-# Add all plots to PDF as a loop
-for iplot in flat_plotlist:
-    pp.savefig(iplot, bbox_inches = 'tight')
-    
-pp.close()

@@ -139,25 +139,19 @@ def filter_sites_region(Region, Hgobs, Dataset_OLD, Dataset_NEW, Year1 = None, Y
     obs_lon = All_region_df.Lon.unique()
     
     # Allow subsetting for years of the simulation, if inputted into the function
-    OLD_Hg0_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg0', Year1)
-    OLD_Hg2_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg2', Year1)
-    NEW_Hg0_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg0', Year2)
-    NEW_Hg2_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg2', Year2)
+    OLD_Hg0_yr = ds_sel_yr(Dataset_OLD, 'vmrhg0', Year1)
+    NEW_Hg0_yr = ds_sel_yr(Dataset_NEW, 'vmrhg0', Year2)
     
     # Create datasets for seasonal TGM at each site for the ref and new models     
     for i in range (len(Region)): 
       OLD_Hg0_site = OLD_Hg0_yr.isel(lev=levels(Region[i])).\
           sel(lat=[obs_lat[i]], lon=[obs_lon[i]], method='nearest').squeeze()
-      OLD_Hg2_site = OLD_Hg2_yr.isel(lev=levels(Region[i])).\
-          sel(lat=[obs_lat[i]], lon=[obs_lon[i]], method='nearest').squeeze()
       NEW_Hg0_site = NEW_Hg0_yr.isel(lev=levels(Region[i])).\
           sel(lat=[obs_lat[i]], lon=[obs_lon[i]], method='nearest').squeeze()
-      NEW_Hg2_site = NEW_Hg2_yr.isel(lev=levels(Region[i])).\
-          sel(lat=[obs_lat[i]], lon=[obs_lon[i]], method='nearest').squeeze()  
           
-      # Calculate TGM values as sum of Hg0 and Hg2     
-      Reg_OLD_mod = (OLD_Hg0_site + OLD_Hg2_site) * unit_conv
-      Reg_NEW_mod = (NEW_Hg0_site + NEW_Hg2_site) * unit_conv
+      # Calculate TGM values as only Hg0
+      Reg_OLD_mod = (OLD_Hg0_site) * unit_conv
+      Reg_NEW_mod = (NEW_Hg0_site) * unit_conv
 
       # calculate climatology (needed if more than one year are averaged)
       Reg_OLD_clim = Reg_OLD_mod.groupby('time.month').mean() 
@@ -213,22 +207,18 @@ def plot_gradient_TGM(Dataset_OLD, Dataset_NEW, Year1 = None, Year2 = None):
     unit_conv = stdpressure / R / stdtemp * MW_Hg * ng_g # converter from vmr to ng m^-3
         
     # Allow subsetting for years, if inputted into the function
-    OLD_Hg0_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg0', Year1)
-    OLD_Hg2_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg2', Year1)
-    NEW_Hg0_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg0', Year2)
-    NEW_Hg2_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg2', Year2)
+    OLD_Hg0_yr = ds_sel_yr(Dataset_OLD, 'vmrhg0', Year1)
+    NEW_Hg0_yr = ds_sel_yr(Dataset_NEW, 'vmrhg0', Year2)
    
-    # Extract and add together Hg0 and Hg2 at the surface from both 
+    # Extract Hg0 at the surface from both 
     # model simulations, multiplying by the unit conversion factor 
     # to obtain values for Total Gaseous Mercury.
     OLD_Hg0 = annual_avg(OLD_Hg0_yr.isel(lev=0))               
-    OLD_Hg2 = annual_avg(OLD_Hg2_yr.isel(lev=0))
 
     NEW_Hg0 = annual_avg(NEW_Hg0_yr.isel(lev=0))                 
-    NEW_Hg2 = annual_avg(NEW_Hg2_yr.isel(lev=0))
                        
-    TGM_Old = (OLD_Hg0 + OLD_Hg2) * unit_conv # TGM is sum of Hg0 and Hg2
-    TGM_New = (NEW_Hg0 + NEW_Hg2) * unit_conv # TGM is sum of Hg0 and Hg2
+    TGM_Old = (OLD_Hg0) * unit_conv # consider TGM as only Hg0
+    TGM_New = (NEW_Hg0) * unit_conv # consider TGM as only Hg0
     
     # Calulate zonal mean of the model results
     TGM_Old_z = TGM_Old.mean('lon')

@@ -12,6 +12,8 @@ from helper_functions import ds_sel_yr, annual_avg
 def SurfaceObsTGM(Old_Dataset, New_Dataset, Year1 = None, Year2 = None):
     """ Plot the mean surface TGM for mercury against different sites for the reference and new models. Also calculate
     the mean for both models, the mean of the observations and the coefficient of determination. 
+
+    AF: Now compare measurements with GEM instead of TGM
     
     Parameters
     ----------
@@ -47,22 +49,18 @@ def SurfaceObsTGM(Old_Dataset, New_Dataset, Year1 = None, Year2 = None):
     unit_conv = stdpressure / R / stdtemp * MW_Hg * ng_g # converter from vmr to ng m^-3
         
     # Allow subsetting for years, if inputted into the function
-    OLD_Hg0_yr = ds_sel_yr(Old_Dataset, 'SpeciesConc_Hg0', Year1)
-    OLD_Hg2_yr = ds_sel_yr(Old_Dataset, 'SpeciesConc_Hg2', Year1)
-    NEW_Hg0_yr = ds_sel_yr(New_Dataset, 'SpeciesConc_Hg0', Year2)
-    NEW_Hg2_yr = ds_sel_yr(New_Dataset, 'SpeciesConc_Hg2', Year2)
+    OLD_Hg0_yr = ds_sel_yr(Old_Dataset, 'vmrhg0', Year1)
+    NEW_Hg0_yr = ds_sel_yr(New_Dataset, 'vmrhg0', Year2)
    
     # Extract and add together Hg0 and Hg2 at the surface from both 
     # model simulations, multiplying by the unit conversion factor 
     # to obtain values for Total Gaseous Mercury.
     OLD_Hg0 = annual_avg(OLD_Hg0_yr.isel(lev=0))              
-    OLD_Hg2 = annual_avg(OLD_Hg2_yr.isel(lev=0))
 
     NEW_Hg0 = annual_avg(NEW_Hg0_yr.isel(lev=0))       
-    NEW_Hg2 = annual_avg(NEW_Hg2_yr.isel(lev=0))
                        
-    TGM_Old = (OLD_Hg0 + OLD_Hg2) * unit_conv # TGM is sum of Hg0 and Hg2
-    TGM_New = (NEW_Hg0 + NEW_Hg2) * unit_conv # TGM is sum of Hg0 and Hg2
+    TGM_Old = (OLD_Hg0 ) * unit_conv # consider TGM as only Hg0 
+    TGM_New = (NEW_Hg0 ) * unit_conv # consider TGM as only Hg0
     
     lon = Old_Dataset.lon
     lat = Old_Dataset.lat

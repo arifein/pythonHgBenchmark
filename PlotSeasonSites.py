@@ -60,24 +60,18 @@ def PlotSeasonSites(Dataset_OLD, Dataset_NEW, Year1 = None, Year2 = None):
         # Load TGM fields from model
 
         # Allow subsetting for years of the simulation, if inputted into the function
-        OLD_Hg0_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg0', Year1)
-        OLD_Hg2_yr = ds_sel_yr(Dataset_OLD, 'SpeciesConc_Hg2', Year1)
-        NEW_Hg0_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg0', Year2)
-        NEW_Hg2_yr = ds_sel_yr(Dataset_NEW, 'SpeciesConc_Hg2', Year2)
+        OLD_Hg0_yr = ds_sel_yr(Dataset_OLD, 'vmrhg0', Year1)
+        NEW_Hg0_yr = ds_sel_yr(Dataset_NEW, 'vmrhg0', Year2)
                   
         # Select level, lat, and longitude where data should be extracted from for both model runs
         OLD_Hg0_site = OLD_Hg0_yr.isel(lev=levels(SiteID)).\
             sel(lat=Lat, lon=Lon, method='nearest').squeeze()
-        OLD_Hg2_site = OLD_Hg2_yr.isel(lev=levels(SiteID)).\
-            sel(lat=Lat, lon=Lon, method='nearest').squeeze()
         NEW_Hg0_site = NEW_Hg0_yr.isel(lev=levels(SiteID)).\
             sel(lat=Lat, lon=Lon, method='nearest').squeeze()
-        NEW_Hg2_site = NEW_Hg2_yr.isel(lev=levels(SiteID)).\
-            sel(lat=Lat, lon=Lon, method='nearest').squeeze()  
         
-        # take sum for TGM and do unit conversion
-        OLD_TGM_site = (OLD_Hg0_site + OLD_Hg2_site) * unit_conv
-        NEW_TGM_site = (NEW_Hg0_site + NEW_Hg2_site) * unit_conv
+        # Consider TGM as only GEM and do unit conversion 
+        OLD_TGM_site = (OLD_Hg0_site) * unit_conv
+        NEW_TGM_site = (NEW_Hg0_site) * unit_conv
                     
         # Make sure that it is a climatology, if have multi-year model runs
         OLD_mod = OLD_TGM_site.groupby('time.month').mean()
